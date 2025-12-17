@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>السيارات | متجر الكابتن</title>
+<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;800&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;font-family:'Cairo',sans-serif}
+body{margin:0;background:#0f172a;color:#fff}
+header{padding:30px 20px;background:#020617;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap}
+header h1{margin:0;font-size:28px;color:#facc15}
+header a{color:#38bdf8;text-decoration:none;font-weight:600}
+
+.filters{background:#020617;padding:20px;display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:15px}
+.filters input,.filters select{padding:12px;border-radius:10px;border:none;font-size:14px}
+
+.cars{max-width:1200px;margin:40px auto;padding:0 20px;display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:25px}
+.car-card{background:#020617;border-radius:20px;overflow:hidden;box-shadow:0 20px 40px rgba(0,0,0,.4);transition:.3s}
+.car-card:hover{transform:translateY(-6px)}
+.car-card img{width:100%;height:180px;object-fit:cover}
+.car-card .info{padding:20px}
+.car-card h3{margin:0 0 10px;color:#facc15}
+.price{font-weight:700;margin-bottom:10px}
+.tag{display:inline-block;background:#38bdf8;color:#020617;padding:5px 10px;border-radius:8px;font-size:12px;margin-bottom:10px}
+.btn{display:block;text-align:center;margin-top:15px;padding:12px;border-radius:10px;background:#facc15;color:#020617;font-weight:700;text-decoration:none}
+
+footer{text-align:center;padding:30px;font-size:14px;opacity:.7}
+</style>
+</head>
+<body>
+
+<header>
+  <h1>السيارات المتاحة</h1>
+  <a href="index.html">⬅ العودة للرئيسية</a>
+</header>
+
+<div class="filters">
+  <input type="text" placeholder="🔍 ابحث باسم السيارة" id="searchInput">
+  <select id="companyFilter">
+    <option value="">الشركة</option>
+    <option value="KIA">KIA</option>
+    <option value="Hyundai">Hyundai</option>
+    <option value="Mercedes">Mercedes</option>
+  </select>
+  <select id="typeFilter">
+    <option value="">نوع الطلب</option>
+    <option value="استلام فوري">استلام فوري</option>
+    <option value="استيراد">استيراد</option>
+  </select>
+</div>
+
+<section class="cars" id="carsContainer">
+  <!-- السيارات ستظهر هنا تلقائي -->
+</section>
+
+<footer>
+  © متجر الكابتن لاستيراد السيارات
+</footer>
+
+<script type="module">
+import { db } from "../js/firebase-config.js";
+import { collection, onSnapshot } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+
+const carsContainer = document.getElementById("carsContainer");
+const searchInput = document.getElementById("searchInput");
+const companyFilter = document.getElementById("companyFilter");
+const typeFilter = document.getElementById("typeFilter");
+
+let allCars = [];
+
+// جلب السيارات من Firestore
+onSnapshot(collection(db, "cars"), snapshot => {
+  allCars = snapshot.docs.map(docSnap => ({ id: docSnap.id, ...docSnap.data() }));
+  renderCars(allCars);
+});
+
+function renderCars(cars){
+  carsContainer.innerHTML = "";
+  cars.forEach(car => {
+    const price = car.price ? Number(car.price).toLocaleString() : "-";
+    const options = car.options ? car.options.join(", ") : "-";
+    carsContainer.innerHTML += `
+      <div class="car-card">
+        <img src="${car.image || 'https://images.unsplash.com/photo-1619767886558-efdc259cde1b'}" />
+        <div class="info">
+          <span class="tag">${car.type || ''}</span>
+          <h3>${car.name}</h3>
+          <div class="price">السعر: ${price} جنيه</div>
+          <div>الأوبشنات: ${options}</div>
+          <a href="car-details.html?id=${car.id}" class="btn">عرض التفاصيل</a>
+        </div>
+      </div>
+    `;
+  });
+}
+
+// فلترة البحث
+function filterCars(){
+  const search = searchInput.value.toLowerCase();
+  const company = companyFilter.value;
+  const type = typeFilter.value;
+
+  const filtered = allCars.filter(car => {
+    const matchesName = car.name.toLowerCase().includes(search);
+    const matchesCompany = company ? car.name.includes(company) : true;
+    const matchesType = type ? car.type === type : true;
+    return matchesName && matchesCompany && matchesType;
+  });
+
+  renderCars(filtered);
+}
+
+searchInput.addEventListener("input", filterCars);
+companyFilter.addEventListener("change", filterCars);
+typeFilter.addEventListener("change", filterCars);
+
+</script>
+
+</body>
+</html>
