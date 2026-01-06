@@ -1,0 +1,23 @@
+{
+  "name": "car-system",
+  "version": "1.0.0",
+  "description": "",
+  "main": "app.js",
+  "scripts": {
+    "start": "node app.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "dependencies": {
+    "axios": "^1.13.2",
+    "body-parser": "^2.2.1",
+    "ejs": "^3.1.10",
+    "exceljs": "^4.4.0",
+    "express": "^5.2.1",
+    "express-session": "^1.18.2",
+    "mongoose": "^9.1.1",
+    "multer": "^2.0.2"
+  }
+}

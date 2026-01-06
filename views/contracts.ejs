@@ -1,0 +1,325 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+
+<head>
+    <meta charset="UTF-8">
+    <title>إدارة التعاقدات والمبيعات - شركة الكابتن</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.rtl.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        body {
+            background: linear-gradient(rgba(15, 15, 30, 0.85), rgba(15, 15, 30, 0.85)),
+                url('https://images.unsplash.com/photo-1552519507-da3b142c6e3d?q=80&w=2070&auto=format&fit=crop');
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+            color: #fdfdfd;
+            font-family: 'Segoe UI', sans-serif;
+            min-height: 100vh;
+        }
+
+        .glass-card {
+            background: rgba(255, 255, 255, 0.07);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 15px;
+            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+        }
+
+        .form-control,
+        .form-select {
+            background: #ffffff !important;
+            color: #000000 !important;
+            border: 2px solid #0dcaf0;
+            font-weight: 500;
+        }
+
+        .table {
+            color: #ffffff !important;
+        }
+
+        .table thead {
+            background: rgba(13, 202, 240, 0.3);
+        }
+
+        .text-info-custom {
+            color: #0dcaf0 !important;
+            font-weight: bold;
+        }
+
+        .remaining-box {
+            background: rgba(255, 77, 77, 0.3);
+            padding: 5px;
+            border-radius: 5px;
+            color: #ff4d4d;
+            font-weight: bold;
+            border: 1px solid rgba(255, 77, 77, 0.4);
+        }
+
+        .paid-box {
+            color: #2ecc71;
+            font-weight: bold;
+        }
+
+        .btn-info {
+            background-color: #0dcaf0;
+            border: none;
+            color: #000;
+            font-weight: bold;
+        }
+
+        .account-selection-card {
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .account-selection-card:hover {
+            transform: translateY(-5px);
+            background: rgba(13, 202, 240, 0.15) !important;
+            border-color: #0dcaf0;
+        }
+
+        .btn-view-img {
+            background: rgba(13, 202, 240, 0.2);
+            color: #0dcaf0;
+            border: 1px solid #0dcaf0;
+        }
+
+        .btn-view-img:hover {
+            background: #0dcaf0;
+            color: #000;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="d-flex align-items-center gap-3 no-print">
+        <span class="text-light">
+            مرحباً، <strong class="text-info">
+                <%= user.name %>
+            </strong>
+            <span class="badge bg-secondary ms-1">
+                <%= user.role==='admin' ? 'مدير' : 'موظف' %>
+            </span>
+        </span>
+        <a href="/logout" class="btn btn-sm btn-outline-danger">
+            <i class="fas fa-sign-out-alt"></i> خروج
+        </a>
+    </div>
+    <div class="container py-5">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h2 class="text-info-custom"><i class="fas fa-file-contract me-2"></i> إدارة عمليات التعاقد</h2>
+            <a href="/" class="btn btn-outline-light btn-sm"><i class="fas fa-home me-1"></i> الرئيسية</a>
+        </div>
+
+        <div class="glass-card p-4 mb-4 shadow">
+            <form action="/add-contract" method="POST" enctype="multipart/form-data" class="row g-3">
+                <div class="col-md-3">
+                    <label class="small mb-1 text-info">بيانات العميل</label>
+                    <input type="text" name="customerName" class="form-control mb-2" placeholder="اسم العميل" required>
+                    <input type="text" name="customerPhone" class="form-control" placeholder="رقم الهاتف" required>
+                </div>
+                <div class="col-md-3">
+                    <label class="small mb-1 text-info">بيانات السيارة</label>
+                    <input type="text" name="chassis" class="form-control mb-2" placeholder="رقم الشاسيه" required>
+                    <input type="text" name="brand" class="form-control mb-2" placeholder="البراند (مثل: كيا)" required>
+                    <input type="text" name="carModel" class="form-control" placeholder="الموديل (مثل: K5)" required>
+                </div>
+                <div class="col-md-2">
+                    <label class="small mb-1 text-info">التفاصيل والسيلز</label>
+                    <input type="number" name="year" class="form-control mb-2" placeholder="السنة">
+                    <input type="text" name="salesName" class="form-control mb-2" placeholder="اسم السيلز">
+                    <label class="small text-warning">إيصال المقدم:</label>
+                    <input type="file" name="receipt" class="form-control form-control-sm" accept="image/*">
+                </div>
+                <div class="col-md-2">
+                    <label class="small mb-1 text-warning">القيم المالية</label>
+                    <input type="number" name="totalPrice" class="form-control mb-2" placeholder="إجمالي السعر"
+                        required>
+                    <input type="number" name="amount" class="form-control" placeholder="مبلغ الحجز" required>
+                </div>
+                <div class="col-md-2">
+                    <label class="small mb-1 text-info">الحساب المستلم</label>
+                    <input type="text" id="selectedAccountDisplay" class="form-control mb-2"
+                        placeholder="اختر الحساب..." readonly data-bs-toggle="modal" data-bs-target="#accountsModal"
+                        style="cursor: pointer; background: #fff !important; border: 2px solid #ffd700 !important;">
+                    <input type="hidden" name="targetAccount" id="targetAccountValue" required>
+
+                    <button type="submit" class="btn btn-info w-100 fw-bold shadow-sm py-3 mt-2">حفظ وتأكيد
+                        العقد</button>
+                </div>
+            </form>
+        </div>
+
+        <div class="glass-card p-3 shadow">
+            <div class="table-responsive">
+                <table class="table table-hover align-middle text-center">
+                    <thead>
+                        <tr>
+                            <th>التاريخ</th>
+                            <th>العميل والسيارة</th>
+                            <th>الإيصالات</th>
+                            <th>الحالة</th>
+                            <th>الموقف المالي</th>
+                            <th>إجراء الـ 80% والترحيل</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <% contracts.reverse().forEach(c=> { %>
+                            <tr class="border-secondary">
+                                <td class="small text-info-custom">
+                                    <%= c.date %>
+                                </td>
+                                <td class="text-end">
+                                    <div class="fw-bold">
+                                        <%= c.customerName %>
+                                    </div>
+                                    <div class="small text-info">
+                                        <%= c.brand %> - <%= c.carModel %>
+                                    </div>
+                                    <div class="text-muted small">شاسيه: <%= c.chassis %>
+                                    </div>
+                                </td>
+                                <td>
+                                    <% if(c.receipt) { %>
+                                        <a href="<%= c.receipt %>" target="_blank"
+                                            class="btn btn-view-img btn-sm mb-1 w-100"><i class="fas fa-image me-1"></i>
+                                            إيصال حجز</a>
+                                        <% } %>
+                                            <% if(c.receipt80) { %>
+                                                <a href="<%= c.receipt80 %>" target="_blank"
+                                                    class="btn btn-view-img btn-sm w-100"><i
+                                                        class="fas fa-file-invoice-dollar me-1"></i> إيصال الـ 80%</a>
+                                                <% } %>
+                                </td>
+                                <td>
+                                    <span
+                                        class="badge rounded-pill <%= c.status.includes('شحن') ? 'bg-success' : 'bg-info text-dark' %>">
+                                        <%= c.status %>
+                                    </span>
+                                </td>
+                                <td class="text-end">
+                                    <% let total=parseFloat(c.totalPrice) || 0; let booking=parseFloat(c.amount) || 0;
+                                        let pay80=parseFloat(c.payment80) || 0; let paid=booking + pay80; let rem=total
+                                        - paid; %>
+                                        <div class="small">إجمالي: <%= total.toLocaleString() %>
+                                        </div>
+                                        <div class="small paid-box">المدفوع: <%= paid.toLocaleString() %>
+                                        </div>
+                                        <div class="remaining-box mt-1">المتبقي: <%= rem.toLocaleString() %>
+                                        </div>
+                                </td>
+                                <td>
+                                    <% if(!c.status.includes('شحن')) { %>
+                                        <form action="/pay-80-percent" method="POST" enctype="multipart/form-data"
+                                            class="d-flex flex-column gap-1">
+                                            <input type="hidden" name="contractId" value="<%= c.id %>">
+                                            <input type="number" name="amount80" class="form-control form-control-sm"
+                                                placeholder="مبلغ الـ 80%" required>
+                                            <label class="small text-white-50 text-end">صورة إيصال الـ 80%:</label>
+                                            <input type="file" name="receipt80"
+                                                class="form-control form-control-sm mb-1" accept="image/*">
+
+                                            <select name="targetAccount" class="form-select form-select-sm" required>
+                                                <option value="" disabled selected>الحساب المستلم...</option>
+                                                <option value="الخزنة الرئيسية">الخزنة الرئيسية</option>
+                                                <option value="بنك مصر - ج.م">بنك مصر (1562)</option>
+                                                <option value="بنك مصر - USD">بنك مصر دولار (2147)</option>
+                                                <option value="Sparkasse - EUR">Sparkasse (أحمد فتوح)</option>
+                                            </select>
+
+                                            <button type="submit" class="btn btn-success btn-sm w-100 fw-bold">ترحيل شحن
+                                                رادار</button>
+                                        </form>
+                                        <% } else { %>
+                                            <span class="text-success fw-bold small"><i
+                                                    class="fas fa-shipping-fast me-1"></i> تم الترحيل للرادار</span>
+                                            <% } %>
+                                </td>
+                            </tr>
+                            <% }) %>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="accountsModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-lg modal-dialog-centered">
+            <div class="modal-content border-0"
+                style="background: rgba(10, 25, 47, 0.95); backdrop-filter: blur(20px); border: 1px solid rgba(52, 152, 219, 0.2) !important;">
+                <div class="modal-header border-secondary">
+                    <h5 class="modal-title text-info"><i class="fas fa-university me-2"></i> حسابات شركة الكابتن</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body p-4 text-end">
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <div class="glass-card p-3 account-selection-card"
+                                onclick="selectAccount('بنك مصر - ج.م', 'بنك مصر - ج.م')">
+                                <div class="d-flex justify-content-between align-items-start">
+                                    <div>
+                                        <h6 class="text-white mb-1">بنك مصر (بالجنيه)</h6>
+                                        <small class="text-white-50 d-block">A/C: 5630001000001562</small>
+                                    </div>
+                                    <span class="badge bg-success">EGP</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="glass-card p-3 account-selection-card"
+                                onclick="selectAccount('بنك مصر - USD', 'بنك مصر - USD')">
+                                <div class="d-flex justify-content-between align-items-start">
+                                    <div>
+                                        <h6 class="text-white mb-1">بنك مصر (دولاري)</h6>
+                                        <small class="text-white-50 d-block">A/C: 1590120000002147</small>
+                                    </div>
+                                    <span class="badge bg-primary">USD</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="glass-card p-3 account-selection-card"
+                                onclick="selectAccount('Sparkasse - EUR', 'Sparkasse - EUR')">
+                                <div class="d-flex justify-content-between align-items-start">
+                                    <div>
+                                        <h6 class="text-white mb-1">Sparkasse (باليورو)</h6>
+                                        <small class="text-white-50 d-block">A/C: 102009384</small>
+                                    </div>
+                                    <span class="badge bg-warning text-dark">EUR</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="glass-card p-3 account-selection-card"
+                                onclick="selectAccount('الخزنة الرئيسية', 'الخزنة الرئيسية')">
+                                <div class="d-flex justify-content-between align-items-start">
+                                    <div>
+                                        <h6 class="text-white mb-1">الخزنة الرئيسية</h6>
+                                        <small class="text-white-50 d-block">كاش المعرض</small>
+                                    </div>
+                                    <span class="badge bg-info">CASH</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        function selectAccount(displayLabel, hiddenValue) {
+            document.getElementById('selectedAccountDisplay').value = displayLabel;
+            document.getElementById('targetAccountValue').value = hiddenValue;
+            const modal = bootstrap.Modal.getInstance(document.getElementById('accountsModal'));
+            modal.hide();
+        }
+    </script>
+        <%- include('partials/signature') %>
+
+</body>
+
+</html>

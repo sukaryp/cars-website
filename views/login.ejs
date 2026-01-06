@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AL CAPTAIN | GALACTIC VOYAGE 7077</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.rtl.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Exo+2:wght@300;900&display=swap');
+
+        :root {
+            --star-gold: #ffcc00;
+            --deep-space: #050510;
+            --hologram: rgba(0, 242, 255, 0.6);
+        }
+
+        body, html {
+            margin: 0; padding: 0; height: 100%;
+            background: var(--deep-space); font-family: 'Exo 2', sans-serif;
+            overflow: hidden; color: #fff;
+        }
+
+        /* الفيديو: سيارات تطير في الفضاء وسط النجوم والمجرات */
+        .space-engine {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            z-index: -5; object-fit: cover;
+            filter: brightness(0.6) contrast(1.1);
+        }
+
+        /* تأثير الغبار الكوني والجزيئات */
+        .cosmic-dust {
+            position: fixed; inset: 0;
+            background: url('https://www.transparenttextures.com/patterns/stardust.png');
+            opacity: 0.5; z-index: -4; pointer-events: none;
+            animation: drift 100s linear infinite;
+        }
+        @keyframes drift { from {background-position: 0 0;} to {background-position: 1000px 1000px;} }
+
+        .universe-wrapper {
+            height: 100vh; display: flex; align-items: center; justify-content: center;
+        }
+
+        /* منصة الهولوغرام (بدون حدود تقليدية) */
+        .hologram-console {
+            position: relative; width: 500px;
+            background: linear-gradient(135deg, rgba(0, 242, 255, 0.05), rgba(0, 0, 0, 0.8));
+            backdrop-filter: blur(10px);
+            padding: 60px 40px;
+            border-radius: 20px;
+            border: 1px solid rgba(0, 242, 255, 0.2);
+            box-shadow: 0 0 100px rgba(0, 242, 255, 0.1), inset 0 0 20px rgba(0, 242, 255, 0.1);
+            transform-style: preserve-3d;
+            animation: float 4s ease-in-out infinite;
+        }
+
+        @keyframes float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-20px); } }
+
+        /* زوايا تكنولوجية حادة */
+        .hologram-console::before, .hologram-console::after {
+            content: ''; position: absolute; width: 40px; height: 40px;
+            border: 2px solid var(--hologram);
+        }
+        .hologram-console::before { top: -5px; left: -5px; border-right: 0; border-bottom: 0; }
+        .hologram-console::after { bottom: -5px; right: -5px; border-left: 0; border-top: 0; }
+
+        .brand-logo {
+            text-align: center; margin-bottom: 40px;
+        }
+
+        .brand-logo h1 {
+            font-weight: 900; font-size: 2.5rem; letter-spacing: 12px;
+            background: linear-gradient(to bottom, #fff, #00f2ff);
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+            text-shadow: 0 0 30px rgba(0, 242, 255, 0.8);
+            margin: 0;
+        }
+
+        /* أزرار وخانات الإدخال الفضائية */
+        .nav-input {
+            position: relative; margin-bottom: 30px;
+        }
+
+        .nav-input input {
+            width: 100%; background: rgba(0, 0, 0, 0.6);
+            border: 1px solid rgba(0, 242, 255, 0.3);
+            border-radius: 5px; padding: 15px; color: #00f2ff;
+            font-family: 'Exo 2', sans-serif; letter-spacing: 2px;
+            outline: none; transition: 0.4s;
+        }
+
+        .nav-input input:focus {
+            border-color: #fff; box-shadow: 0 0 20px rgba(0, 242, 255, 0.5);
+            background: rgba(0, 242, 255, 0.05);
+        }
+
+        /* ماسح البصمة "أشعة إكس" */
+        .biometric-zone {
+            width: 80px; height: 80px; margin: 0 auto 30px;
+            border: 2px solid var(--hologram); border-radius: 15px;
+            display: flex; align-items: center; justify-content: center;
+            position: relative; overflow: hidden;
+        }
+
+        .biometric-zone i { font-size: 2.5rem; color: #00f2ff; z-index: 2; }
+
+        .scan-beam {
+            position: absolute; width: 100%; height: 4px;
+            background: #fff; box-shadow: 0 0 15px #00f2ff;
+            top: 0; animation: scanning 2s linear infinite;
+        }
+
+        @keyframes scanning { 0% { top: 0; } 100% { top: 100%; } }
+
+        /* زر الإطلاق */
+        .launch-btn {
+            width: 100%; padding: 18px;
+            background: transparent; border: 2px solid #00f2ff;
+            color: #fff; font-weight: 900; letter-spacing: 6px;
+            text-transform: uppercase; cursor: pointer;
+            transition: 0.5s; position: relative; overflow: hidden;
+        }
+
+        .launch-btn:hover {
+            background: #00f2ff; color: #000;
+            box-shadow: 0 0 50px #00f2ff;
+            transform: scale(1.02);
+        }
+
+        /* نصوص الـ Data الجانبية */
+        .data-readout {
+            position: absolute; top: 20%; left: -180px;
+            font-size: 10px; color: #00f2ff; opacity: 0.7;
+            text-align: left; line-height: 1.8;
+        }
+    </style>
+</head>
+<body>
+
+    <video class="space-engine" autoplay muted loop playsinline>
+        <source src="https://assets.mixkit.co/videos/preview/mixkit-flying-through-a-neon-cyberpunk-city-at-night-32654-large.mp4" type="video/mp4">
+    </video>
+
+    <div class="cosmic-dust"></div>
+
+    <div class="universe-wrapper">
+        <div class="hologram-console">
+            
+            <div class="data-readout">
+                SYSTEM: STABLE<br>
+                OXYGEN: 98%<br>
+                FUEL: DARK MATTER<br>
+                COORDINATES: Z-5025
+            </div>
+
+            <div class="brand-logo">
+                <p style="font-size: 10px; letter-spacing: 5px; color: #00f2ff;">GALACTIC FLEET</p>
+                <h1>AL CAPTAIN</h1>
+            </div>
+
+            <form action="/login" method="POST">
+                <div class="nav-input">
+                    <input type="text" name="username" placeholder="PILOT ID" required>
+                </div>
+
+                <div class="nav-input">
+                    <input type="password" name="password" placeholder="SECURITY TOKEN" required>
+                </div>
+
+                <div class="biometric-zone">
+                    <div class="scan-beam"></div>
+                    <i class="fas fa-fingerprint"></i>
+                </div>
+
+                <button type="submit" class="launch-btn">
+                    START ENGINES
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        // حركة تفاعلية مع النجوم
+        document.addEventListener('mousemove', (e) => {
+            const console = document.querySelector('.hologram-console');
+            const x = (window.innerWidth / 2 - e.pageX) / 30;
+            const y = (window.innerHeight / 2 - e.pageY) / 30;
+            console.style.transform = `rotateY(${x}deg) rotateX(${y}deg)`;
+        });
+    </script>
+</body>
+</html>

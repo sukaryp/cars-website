@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+
+<head>
+    <meta charset="UTF-8">
+    <title>أرشيف المبيعات المنتهية</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.rtl.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        body {
+            background: #050510;
+            color: #fff;
+            font-family: 'Segoe UI', sans-serif;
+        }
+
+        .archive-card {
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 15px;
+            transition: 0.3s;
+        }
+
+        .archive-card:hover {
+            background: rgba(255, 255, 255, 0.05);
+        }
+
+        .status-badge {
+            background: #198754;
+            color: white;
+            padding: 5px 15px;
+            border-radius: 50px;
+            font-size: 0.8rem;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="d-flex align-items-center gap-3 no-print">
+        <span class="text-light">
+            مرحباً، <strong class="text-info">
+                <%= user.name %>
+            </strong>
+            <span class="badge bg-secondary ms-1">
+                <%= user.role==='admin' ? 'مدير' : 'موظف' %>
+            </span>
+        </span>
+        <a href="/logout" class="btn btn-sm btn-outline-danger">
+            <i class="fas fa-sign-out-alt"></i> خروج
+        </a>
+    </div>
+    <div class="container py-5">
+        <div class="d-flex justify-content-between align-items-center mb-5">
+            <h3><i class="fas fa-box-archive text-success me-2"></i> أرشيف العمليات المنتهية</h3>
+            <a href="/import" class="btn btn-outline-light btn-sm rounded-pill">العودة للرادار</a>
+        </div>
+
+        <div class="table-responsive">
+            <table class="table table-dark table-hover align-middle">
+                <thead>
+                    <tr>
+                        <th>تاريخ التسليم</th>
+                        <th>السيارة</th>
+                        <th>العميل</th>
+                        <th>المسؤول</th>
+                        <th>إجمالي السعر</th>
+                        <th>الحالة</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <% imports.reverse().forEach(item=> { %>
+                        <tr>
+                            <td><span class="text-white-50">
+                                    <%= item.deliveryDate || item.date %>
+                                </span></td>
+                            <td><b class="text-info">
+                                    <%= item.name %>
+                                </b></td>
+                            <td>
+                                <%= item.customerName %>
+                            </td>
+                            <td><span class="badge bg-secondary">
+                                    <%= item.salesName %>
+                                </span></td>
+                            <td>
+                                <%= (item.totalPrice || 0).toLocaleString() %> ج.م
+                            </td>
+
+                            <td><span class="status-badge">تم التسليم <i class="fas fa-check-circle"></i></span></td>
+                        </tr>
+                        <% }) %>
+                </tbody>
+            </table>
+            <% if(imports.length===0) { %>
+                <div class="text-center py-5">
+                    <i class="fas fa-folder-open fa-3x text-white-50 mb-3"></i>
+                    <p>لا توجد عمليات مكتملة حتى الآن</p>
+                </div>
+                <td>
+                    <div class="d-flex flex-column">
+                        <span class="text-info">
+                            <%= car.addedBy || 'المدير' %>
+                        </span>
+                        <small class="text-muted">
+                            <%= car.addedDate || '' %>
+                        </small>
+                    </div>
+                </td>
+                <% } %>
+        </div>
+    </div>
+    <%- include('partials/signature') %>
+
+</body>
+
+</html>

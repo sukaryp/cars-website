@@ -1,0 +1,144 @@
+<%- include('partials/header') %>
+
+    <style>
+        /* تحسينات إضافية للفخامة */
+        .glass-card {
+            background: rgba(255, 255, 255, 0.03);
+            backdrop-filter: blur(15px);
+            border: 1px solid rgba(0, 242, 255, 0.1);
+            border-radius: 20px;
+            transition: 0.4s;
+        }
+
+        .main-title {
+            background: linear-gradient(90deg, #fff, var(--neon-cyan));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            font-weight: 800;
+            text-transform: uppercase;
+        }
+
+        .shadow-glow {
+            box-shadow: 0 0 20px rgba(0, 242, 255, 0.2);
+            border: none;
+            transition: 0.3s;
+        }
+
+        .shadow-glow:hover {
+            box-shadow: 0 0 30px rgba(0, 242, 255, 0.5);
+            transform: translateY(-2px);
+            background-color: var(--neon-cyan);
+            color: #000;
+        }
+
+        .user-row {
+            transition: 0.3s;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05) !important;
+        }
+
+        .user-row:hover {
+            background: rgba(0, 242, 255, 0.05) !important;
+        }
+
+        code {
+            color: var(--neon-cyan);
+            background: rgba(0, 242, 255, 0.1);
+            padding: 2px 8px;
+            border-radius: 5px;
+        }
+
+        .badge-admin {
+            background: linear-gradient(45deg, #ff4b2b, #ff416c);
+            box-shadow: 0 0 10px rgba(255, 75, 43, 0.3);
+        }
+
+        .badge-officer {
+            background: linear-gradient(45deg, #00d4ff, #0080ff);
+            box-shadow: 0 0 10px rgba(0, 212, 255, 0.3);
+        }
+    </style>
+
+    <div class="container py-5" style="margin-top: 50px;">
+        <div
+            class="d-flex justify-content-between align-items-center mb-5 p-4 glass-card animate__animated animate__fadeInDown">
+            <div>
+                <h1 class="main-title mb-0">مركز تحكم الطاقم</h1>
+                <p class="text-info small mb-0 opacity-75">
+                    <i class="fas fa-shield-halved me-1"></i> وحدة إدارة صلاحيات الوصول المركزية
+                </p>
+            </div>
+            <button class="btn btn-info rounded-pill px-4 py-2 shadow-glow fw-bold" data-bs-toggle="modal"
+                data-bs-target="#addUserModal">
+                <i class="fas fa-user-plus me-2"></i> إضافة موظف جديد
+            </button>
+        </div>
+
+        <div class="glass-card overflow-hidden animate__animated animate__fadeInUp">
+            <table class="table table-dark table-hover mb-0">
+                <thead class="text-info border-bottom border-secondary">
+                    <tr class="text-uppercase small">
+                        <th class="p-4">هوية الموظف</th>
+                        <th>اسم المستخدم</th>
+                        <th>المستوى الأمني</th>
+                        <th class="text-center">الإجراءات</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <% if (users && users.length> 0) { %>
+                        <% users.forEach(u=> { %>
+                            <tr class="align-middle user-row">
+                                <td class="p-4">
+                                    <div class="d-flex align-items-center">
+                                        <div class="rounded-circle bg-dark border border-secondary d-flex align-items-center justify-content-center me-3"
+                                            style="width: 40px; height: 40px;">
+                                            <i class="fas fa-user-astronaut text-info"></i>
+                                        </div>
+                                        <span class="fw-bold">
+                                            <%= u.name %>
+                                        </span>
+                                    </div>
+                                </td>
+                                <td><code>@<%= u.username %></code></td>
+                                <td>
+                                    <% if (u.role==='admin' ) { %>
+                                        <span class="badge badge-admin rounded-pill px-3">
+                                            <i class="fas fa-crown me-1"></i> مدير نظام
+                                        </span>
+                                        <% } else { %>
+                                            <span class="badge badge-officer rounded-pill px-3">
+                                                <i class="fas fa-user-tie me-1"></i> محاسب
+                                            </span>
+                                            <% } %>
+                                </td>
+                                <td class="text-center">
+                                    <a href="/admin/delete-user/<%= u.id %>"
+                                        class="btn btn-sm btn-outline-danger rounded-circle p-2 shadow-sm"
+                                        onclick="return confirm('تحذير: هل أنت متأكد من مسح هذا العضو نهائياً من قاعدة البيانات؟')"
+                                        title="حذف المستخدم">
+                                        <i class="fas fa-trash-alt mx-1"></i>
+                                    </a>
+                                </td>
+                                <button onclick="window.history.back()" class="btn btn-outline-info rounded-pill px-3">
+                                    <i class="fas fa-arrow-right me-2"></i> رجوع
+                                </button>
+                            </tr>
+                            <% }) %>
+                                <% } else { %>
+                                    <tr>
+                                        <td colspan="4" class="text-center p-5 text-white-50">
+                                            <i class="fas fa-users-slash fa-3x mb-3 d-block"></i>
+                                            لا يوجد أعضاء طاقم مسجلين حالياً
+                                        </td>
+                                    </tr>
+                                    <% } %>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <%- include('partials/addUserModal') %>
+        <%- include('partials/signature') %>
+
+            <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+            <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
