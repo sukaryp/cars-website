@@ -1,0 +1,829 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>إدارة تعاقدات الكابتن | Premium System</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+ <style>
+    @import url('https://fonts.googleapis.com/css2?family=Tajawal:wght@400;700;900&display=swap');
+
+    :root {
+      --primary: #3b82f6;
+      --bg-dark: #0f172a;
+      --card-bg: rgba(255, 255, 255, 0.03);
+      --border: rgba(255, 255, 255, 0.1);
+      --success: #10b981;
+    }
+
+    body {
+      background: var(--bg-dark);
+      color: white;
+      font-family: 'Tajawal', sans-serif;
+      line-height: 1.6;
+    }
+
+    /* جعل الحاوية تأخذ عرض الشاشة بالكامل */
+    .main-wrapper {
+      width: 98%;
+      margin: 0 auto;
+      padding: 20px 0;
+    }
+
+    .table-container {
+      width: 100%;
+      overflow-x: auto;
+      border-radius: 24px;
+      background: rgba(15, 23, 42, 0.5);
+    }
+
+    table {
+      width: 100%;
+      border-collapse: separate;
+      border-spacing: 0 12px; /* مسافة بين الصفوف لجعلها تبدو كبطاقات */
+    }
+
+    th {
+      padding: 20px;
+      text-align: right;
+      color: #64748b;
+      font-weight: 900;
+      font-size: 0.85rem;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+
+    td {
+      background: rgba(255, 255, 255, 0.03);
+      padding: 18px 20px;
+      vertical-align: middle;
+      border-top: 1px solid var(--border);
+      border-bottom: 1px solid var(--border);
+    }
+
+    /* حواف الصفوف الدائرية */
+    td:first-child { 
+        border-radius: 0 20px 20px 0; 
+        border-right: 1px solid var(--border);
+    }
+    td:last-child { 
+        border-radius: 20px 0 0 20px; 
+        border-left: 1px solid var(--border);
+    }
+
+    tr:hover td {
+      background: rgba(255, 255, 255, 0.06);
+      border-color: rgba(59, 130, 246, 0.3);
+      transition: 0.3s ease;
+    }
+
+    /* تنسيق بيانات الموظف والوقت */
+    .user-info {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .user-name {
+      color: #f8fafc;
+      font-weight: 800;
+      font-size: 0.95rem;
+    }
+
+    .record-time {
+      color: #64748b;
+      font-size: 0.75rem;
+      display: flex;
+      align-items: center;
+      gap: 5px;
+    }
+
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      padding: 6px 14px;
+      border-radius: 12px;
+      font-size: 12px;
+      font-weight: 800;
+    }
+
+    .price-tag { color: var(--success); background: rgba(16, 185, 129, 0.1); border: 1px solid rgba(16, 185, 129, 0.2); }
+    
+    .action-buttons { display: flex; gap: 8px; justify-content: flex-end; }
+
+    .btn-action {
+      padding: 10px 18px;
+      border-radius: 14px;
+      font-size: 13px;
+      font-weight: bold;
+      transition: 0.3s;
+    }
+
+
+    /* تنسيق السعر والحالة لعدم التداخل */
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      padding: 6px 12px;
+      border-radius: 10px;
+      font-size: 12px;
+      font-weight: 800;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .price-tag {
+      color: #10b981;
+      background: rgba(16, 185, 129, 0.1);
+    }
+
+    .status-tag {
+      color: #f59e0b;
+      background: rgba(245, 158, 11, 0.1);
+    }
+
+    /* تنسيق المدخلات */
+    /* 1. التنسيق الأساسي للمدخلات (للشاشة الغامقة) */
+.glass-input {
+    background: rgba(255, 255, 255, 0.08) !important;
+    border: 2px solid var(--border) !important;
+    color: white !important; /* النص أبيض عشان يبان في الـ Dark Mode */
+    padding: 14px 18px;
+    border-radius: 16px;
+    width: 100%;
+    outline: none;
+    transition: 0.3s;
+    font-size: 1.1rem;
+    font-weight: 800; /* خط تقيل عشان الوضوح */
+}
+
+/* 2. حل مشكلة القوائم المنسدلة (dropdown) اللي بتظهر أبيض في أبيض */
+.glass-input option {
+    background-color: #1e293b !important; /* خلفية غامقة للخيارات */
+    color: white !important; /* نص أبيض واضح */
+}
+
+/* 3. "السحر" اللي بيصلح الطباعة والتقرير الأبيض */
+/* أي input جوه منطقة الطباعة يتحول لونه لأسود فورا */
+#printableArea .glass-input, 
+#printableArea select, 
+#printableArea text,
+#printableArea {
+    color: black !important;
+    background: white !important;
+    border-color: black !important;
+}
+
+/* 4. تحسين التركيز (Focus) */
+.glass-input:focus {
+    border-color: var(--primary) !important;
+    background: rgba(255, 255, 255, 0.12) !important;
+    box-shadow: 0 0 20px rgba(59, 130, 246, 0.3);
+}
+    .modal-blur {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.85);
+      backdrop-filter: blur(12px);
+      z-index: 1000;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .btn-grad {
+      background: linear-gradient(135deg, #1d4ed8, #3b82f6);
+      padding: 12px 25px;
+      border-radius: 16px;
+      font-weight: 900;
+      transition: 0.4s;
+    }
+
+    .btn-grad:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 20px rgba(59, 130, 246, 0.3);
+    }
+
+    /* شبكة الصور */
+    .img-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+      gap: 12px;
+    }
+
+    .img-grid img {
+      border-radius: 12px;
+      width: 100%;
+      height: 100px;
+      object-fit: cover;
+      cursor: pointer;
+      border: 2px solid transparent;
+      transition: 0.3s;
+    }
+
+    .img-grid img:hover {
+      border-color: var(--primary);
+    }
+
+    .custom-scroll::-webkit-scrollbar { width: 5px; }
+    .custom-scroll::-webkit-scrollbar-thumb { background: rgba(255, 255, 255, 0.1); border-radius: 10px; }
+  </style>
+</head>
+
+<body class="p-4 md:p-10">
+
+<div class="max-w-[95%] mx-auto">
+    <div class="flex flex-col md:flex-row justify-between items-center mb-12 gap-6">
+      <div class="glass-card p-6 px-10 border-r-8 border-blue-600">
+        <h1 class="text-4xl font-black tracking-tighter italic">
+          <span class="text-blue-500">AL-CAPTIN</span> SYSTEM
+          <span class="block text-sm font-normal text-gray-400 not-italic">فرع: <%= user.branch %> | الموظف: <%= user.name %></span>
+        </h1>
+      </div>
+      <div class="flex gap-4">
+        <a href="/" class="bg-slate-700/50 text-white border border-white/10 px-6 py-5 rounded-2xl font-black text-lg flex items-center gap-3 hover:bg-slate-600 transition-all">
+          <i class="fas fa-th-large"></i> الرئيسية
+        </a>
+        <button onclick="openModal('addModal')" class="btn-grad px-10 py-5 rounded-2xl font-black text-lg flex items-center gap-3 shadow-2xl">
+          <i class="fas fa-plus-circle text-2xl"></i> إضافة تعاقد جديد
+        </button>
+      </div>
+    </div>
+
+    <div class="glass-card overflow-hidden shadow-2xl">
+      <div class="overflow-x-auto">
+        <table class="w-full text-right">
+          <thead>
+            <tr class="bg-blue-600/10 text-blue-400 border-b border-white/5">
+              <th class="p-6 text-xs uppercase">الكود المميز</th>
+              <th class="p-6">بيانات التسجيل (اللحظة)</th>
+              <th class="p-6">العميل</th>
+              <th class="p-6">السيارة</th>
+              <th class="p-6 text-center">الحالة</th>
+              <th class="p-6 text-center">المتبقي للتحصيل</th>
+              <th class="p-6 text-center">العمليات</th>
+            </tr>
+          </thead>
+          <tbody class="divide-y divide-white/5">
+            <% if (locals.contracts && contracts.length > 0) { %>
+            <% contracts.reverse().forEach(c => { %>
+            <tr class="hover:bg-white/5 transition-all group">
+              <td class="p-6 font-mono text-yellow-500 font-bold"><%= c.id %></td>
+
+              <td class="p-6">
+                <div class="flex flex-col gap-2">
+                  <div class="flex items-center">
+                    <span class="px-20 py-1 bg-blue-500/10 rounded-lg text-[18px] font-black text-blue-400 border border-blue-500/20 shadow-sm">
+                       <i class="fas fa-user-edit ml-1"></i> <%= c.createdBy || 'غير مسجل' %>
+                    </span>
+                  </div>
+                  <div class="flex flex-col pr-1 border-r-2 border-white/10 gap-1">
+                    <span class="text-[13px] text-gray-300 font-bold">
+                       <i class="fas fa-store ml-1 text-gray-600"></i> فرع: <%= c.branchName %>
+                    </span>
+                    <span class="text-[17px] text-yellow-400 flex items-center gap-1 font-bold">
+           <i class="far fa-calendar-alt"></i> 
+           <%= c.timestamp ? new Date(c.timestamp).toLocaleDateString('ar-EG') : 'تاريخ قديم' %>
+        </span>
+
+        <span class="text-[16px] text-emerald-400 flex items-center gap-1 font-black font-mono mt-1 bg-emerald-500/10 w-fit px-2 rounded">
+           <i class="far fa-clock"></i> 
+           <%= c.timestamp ? new Date(c.timestamp).toLocaleTimeString('ar-EG', {hour: '2-digit', minute:'2-digit', second:'2-digit'}) : '--:--' %>
+        </span>
+    </div>
+  </div>
+</td>
+              <td class="p-6">
+                <div class="font-bold text-lg text-white"><%= c.name %></div>
+                <div class="text-xs text-gray-500 mt-1 font-bold"><%= c.phone %></div>
+              </td>
+
+              <td class="p-6">
+                <div class="text-blue-400 font-bold text-lg"><%= c.brand %> - <%= c.model %></div>
+                <div class="text-xs text-gray-500 font-bold"><%= c.year %> | <%= c.class %></div>
+              </td>
+
+              <td class="p-6 text-center">
+                <% if (c.status === 'archived') { %>
+                <span class="text-[10px] font-bold px-3 py-1 rounded-lg bg-emerald-500/10 text-emerald-400 border-emerald-500/20 border italic">
+                  <i class="fas fa-check-double ml-1"></i> تم التسليم والأرشفة
+                </span>
+                <% } else if (c.status === 'shipping') { %>
+                <span class="text-[10px] font-bold px-3 py-1 rounded-lg bg-amber-500/10 text-amber-400 border-amber-500/20 border italic">
+                  <i class="fas fa-ship ml-1"></i> في مرحلة الشحن
+                </span>
+                <% } else { %>
+                <span class="text-[10px] font-bold px-3 py-1 rounded-lg bg-blue-500/10 text-blue-400 border-blue-500/20 border italic">
+                  <i class="fas fa-clock ml-1"></i> في انتظار فيديو الفحص
+                </span>
+                <% } %>
+              </td>
+
+              <td class="p-6 text-center">
+                <% 
+                  let paidManual = (c.payments || []).reduce((acc, p) => acc + (Number(p.val) * Number(p.rate)), 0);
+                  let paidBank = (c.paymentHistory || []).reduce((acc, ph) => acc + Number(ph.amount), 0);
+                  let deposit = (Number(c.dep_value) || 0) * (Number(c.dep_currency_rate) || 1);
+                  let remaining = (Number(c.price) || 0) - deposit - paidManual - paidBank;
+                %>
+                <span class="px-4 py-2 rounded-full bg-emerald-500/10 text-emerald-400 font-black border border-emerald-500/20 text-lg">
+                  <%= Math.max(0, remaining).toLocaleString() %> ج.م
+                </span>
+              </td>
+
+              <td class="p-6">
+                <div class="flex justify-center gap-3">
+                  <button onclick='showDetails(<%- JSON.stringify(c) %>)' class="bg-white/5 p-4 rounded-2xl hover:bg-blue-600 transition-all group-hover:scale-110 shadow-lg text-sm font-bold text-white">
+                    <i class="fas fa-expand-alt ml-1"></i> التفاصيل
+                  </button>
+
+                  <% if (c.status === 'shipping' || c.status === 'archived') { %>
+                  <div class="flex items-center gap-2 bg-slate-800/50 text-slate-400 border border-white/5 px-6 py-2 rounded-2xl font-bold text-xs italic">
+                    <i class="fas fa-lock text-emerald-500"></i>
+                    <%= c.status === 'archived' ? 'العقد مكتمل ومؤرشف' : 'تم التصدير للشحن' %>
+                  </div>
+                  <% } else { %>
+                  <button onclick='openPayModal(<%- JSON.stringify(c) %>, <%= remaining %>)' class="bg-emerald-600/20 text-emerald-400 border border-emerald-600/50 px-6 py-2 rounded-2xl font-black hover:bg-emerald-600 hover:text-white transition-all">
+                    دفع جزئي
+                  </button>
+                  <button onclick='openShipModal(<%- JSON.stringify(c) %>)' class="bg-amber-600/20 text-amber-400 border border-amber-600/50 px-4 py-2 rounded-2xl font-black hover:bg-amber-600 hover:text-white transition-all text-xs">
+                    تصدير للشحن <i class="fas fa-paper-plane mr-1"></i>
+                  </button>
+                  <% } %>
+
+                  <% if (user.role === 'admin') { %>
+                  <button onclick="deleteContract('<%= c.id %>')" class="bg-red-600/20 text-red-400 border border-red-600/50 p-4 rounded-2xl hover:bg-red-600 hover:text-white transition-all">
+                    <i class="fas fa-trash-alt"></i>
+                  </button>
+                  <% } %>
+                </div>
+              </td>
+            </tr>
+            <% }) %>
+            <% } else { %>
+            <tr>
+              <td colspan="7" class="p-24 text-center text-gray-600 text-xl font-bold italic">لا توجد تعاقدات مسجلة حالياً لهذا الفرع..</td>
+            </tr>
+            <% } %>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <div id="addModal" class="modal-blur p-4">
+    <div class="glass-card max-w-5xl w-full p-10 relative overflow-y-auto max-h-[95vh] shadow-2xl">
+      <button onclick="closeModal('addModal')" class="absolute top-8 left-8 text-gray-500 hover:text-white transition"><i class="fas fa-times text-2xl"></i></button>
+      <h2 class="text-3xl font-black mb-10 border-r-8 border-blue-600 pr-5 italic text-blue-400">إضافة تعاقد جديد - فرع <%= user.branch %></h2>
+
+      <form action="/contracts/save" method="POST" enctype="multipart/form-data" class="grid grid-cols-1 md:grid-cols-3 gap-8">
+        <div class="space-y-2">
+          <label class="text-xs text-gray-400 px-2 font-bold uppercase tracking-widest">1- بيانات العميل</label>
+          <input type="text" name="name" placeholder="الاسم بالكامل" class="glass-input" required>
+        </div>
+        <div class="space-y-2 pt-6">
+          <input type="text" name="phone" placeholder="رقم الموبايل" class="glass-input">
+        </div>
+        <div class="space-y-2 pt-6">
+          <input type="text" name="nid" placeholder="الرقم القومي" class="glass-input">
+        </div>
+        <div class="space-y-2">
+  <label class="text-xs text-yellow-500 px-2 font-bold uppercase tracking-widest">3- جهة التعاقد</label>
+<input type="text" name="branchName" id="branchName" placeholder="اكتب الفرع (مثلاً: المهندسين)" class="glass-input"></div>
+
+        <div class="space-y-2">
+          <label class="text-xs text-gray-400 px-2 font-bold uppercase tracking-widest">2- تفاصيل المركبة</label>
+          <input type="text" name="brand" placeholder="ماركة السيارة" class="glass-input">
+        </div>
+        <div class="space-y-2 pt-6">
+          <input type="text" name="model" placeholder="الموديل (E-Class etc..)" class="glass-input">
+        </div>
+        <div class="space-y-2 pt-6">
+          <input type="number" name="year" placeholder="سنة الصنع" class="glass-input">
+        </div>
+
+        <div class="space-y-2">
+          <label class="text-xs text-gray-400 px-2 font-bold uppercase tracking-widest">3- المسؤولين</label>
+          <input type="text" name="sales" placeholder="السيلز المسؤول" class="glass-input">
+        </div>
+        <div class="space-y-2 pt-6">
+          <input type="text" name="supervisor" placeholder="تحت إشراف" class="glass-input">
+        </div>
+        <div class="space-y-2 pt-6">
+          <select name="class" class="glass-input cursor-pointer">
+            <option value="">اختر الفئة</option>
+            <option>اقتصاديه</option>
+            <option>متوسطه</option>
+            <option>فل كامل (أعلى فئة)</option>
+          </select>
+        </div>
+
+        <div class="md:col-span-3 bg-white/5 p-8 rounded-3xl border border-white/10 mt-4">
+          <h3 class="text-sm font-bold mb-6 text-emerald-400 uppercase tracking-widest italic">4- الحسبة المالية (مربوط بالبورصة حي)</h3>
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <div>
+              <label class="text-[10px] text-gray-500 block mb-2 mr-2">إجمالي سعر السيارة (ج.م)</label>
+              <input type="text" id="price_display" placeholder="0.00" class="glass-input text-xl font-black" oninput="formatNumberInput(this, 'price_real')">
+              <input type="hidden" name="price" id="price_real">
+            </div>
+            <div>
+              <label class="text-[10px] text-gray-500 block mb-2 mr-2">عملة التحويل (سعر البورصة)</label>
+              <select id="dep_currency" name="dep_currency_rate" class="glass-input font-bold" onchange="calculateDeposit()">
+                <option value="50.00">جاري جلب الدولار...</option>
+                <option value="55.00">جاري جلب اليورو...</option>
+                <option value="1">جنيه مصري (EGP)</option>
+              </select>
+              <input type="hidden" name="dep_currency" value="USD"> </div>
+            <div>
+              <label class="text-[10px] text-gray-500 block mb-2 mr-2">المبلغ المدفوع (حجز)</label>
+              <input type="text" id="dep_display" placeholder="0.00" class="glass-input text-emerald-400 text-xl font-black" oninput="formatNumberInput(this, 'dep_real')">
+              <input type="hidden" name="dep_value" id="dep_real">
+            </div>
+          </div>
+          <div id="calc_box" class="mt-6 p-5 bg-blue-500/10 rounded-2xl hidden border border-blue-500/20 text-center animate-pulse font-bold"></div>
+        </div>
+
+        <div class="md:col-span-2 space-y-2">
+          <label class="text-xs text-gray-400 px-2 font-bold uppercase tracking-widest">5- روابط وصور</label>
+          <input type="url" name="link" placeholder="رابط السيارة على الموقع الخارجي" class="glass-input">
+        </div>
+        <div class="pt-6">
+          <input type="file" name="photos" multiple class="glass-input text-xs file:hidden cursor-pointer" id="fileInput">
+          <label for="fileInput" class="text-[10px] text-gray-500 text-center block mt-1">اضغط لرفع صور السيارة والعقد</label>
+        </div>
+
+        <button type="submit" class="md:col-span-3 btn-grad p-6 rounded-2xl font-black text-2xl mt-6 shadow-2xl">
+          إتمام وحفظ بيانات التعاقد <i class="fas fa-save ml-2"></i>
+        </button>
+      </form>
+    </div>
+  </div>
+
+  <div id="detailsModal" class="modal-blur p-4">
+    <div class="glass-card max-w-6xl w-full p-10 relative overflow-y-auto max-h-[90vh]">
+      <button onclick="closeModal('detailsModal')" class="absolute top-8 left-8 text-gray-400 hover:text-white transition"><i class="fas fa-times text-2xl"></i></button>
+      <div id="detailsContent"></div>
+    </div>
+  </div>
+
+  <div id="shipExportModal" class="modal-blur p-4">
+    <div class="glass-card max-w-md w-full p-10 text-center relative border-t-8 border-amber-500 shadow-2xl">
+      <h2 class="text-2xl font-black mb-6 text-amber-400 italic">نظام تتبع الشحن</h2>
+      <p class="text-xs text-gray-500 mb-6 font-bold">بمجرد التحويل للشحن، سيتم إيقاف زر الدفع الجزئي وبدء العد التنازلي للوصول.</p>
+      <div class="space-y-5">
+        <div class="text-right">
+          <label class="text-[10px] text-gray-500 mr-2 mb-2 block font-bold text-xs">اختر مدة الشحن (بالأشهر):</label>
+          <select id="export_duration" class="glass-input font-black text-xl text-center">
+            <option value="3">3 شهور</option>
+            <option value="4">4 شهور</option>
+            <option value="5">5 شهور</option>
+          </select>
+        </div>
+        <button onclick="confirmExportToShipping()" class="btn-grad w-full p-5 rounded-2xl font-black text-xl shadow-xl mt-4">
+          بدء عملية التصدير <i class="fas fa-ship ml-2"></i>
+        </button>
+      </div>
+      <button onclick="closeModal('shipExportModal')" class="mt-6 text-gray-500 hover:text-white text-xs font-bold uppercase tracking-widest transition">إلغاء</button>
+    </div>
+  </div>
+
+  <div id="payModal" class="modal-blur p-4">
+    <div class="glass-card max-w-md w-full p-10 text-center relative border-t-8 border-emerald-500 shadow-2xl">
+      <h2 class="text-2xl font-black mb-6 text-emerald-400 italic">تحصيل دفعة جديدة</h2>
+      <div id="payInfo" class="mb-8 p-6 bg-white/5 rounded-3xl text-sm leading-loose text-right border border-white/5 font-bold"></div>
+
+      <div class="space-y-5">
+        <div class="text-right">
+          <label class="text-[10px] text-gray-500 mr-2 mb-2 block font-bold">المبلغ المستلم بالعملة الأجنبية:</label>
+          <input type="text" id="part_display" placeholder="0.00" class="glass-input font-black text-2xl text-center text-blue-400" oninput="formatNumberInput(this, 'part_real')">
+          <input type="hidden" id="part_real">
+        </div>
+        <div class="text-right">
+          <label class="text-[10px] text-gray-500 mr-2 mb-2 block font-bold">سعر الصرف المتفق عليه:</label>
+          <select id="part_rate" class="glass-input text-center font-bold">
+            <option value="50.00">جاري جلب الدولار...</option>
+            <option value="55.00">جاري جلب اليورو...</option>
+            <option value="1">جنيه مصري (EGP)</option>
+          </select>
+        </div>
+        <button onclick="submitPartial()" class="btn-grad w-full p-5 rounded-2xl font-black text-xl shadow-xl mt-4">
+          تأكيد التحصيل والخصم <i class="fas fa-check-double ml-2"></i>
+        </button>
+      </div>
+      <button onclick="closeModal('payModal')" class="mt-6 text-gray-500 hover:text-white text-xs font-bold uppercase tracking-widest transition">إلغاء العملية</button>
+    </div>
+  </div>
+
+ <script>
+    // --- 1. نظام جلب أسعار البورصة الحية ---
+    async function fetchLiveExchangeRates() {
+      try {
+        const response = await fetch('https://open.er-api.com/v6/latest/USD');
+        const data = await response.json();
+
+        if (data && data.rates) {
+          const usdToEgp = data.rates.EGP.toFixed(2);
+          const eurToEgp = (data.rates.EGP / data.rates.EUR).toFixed(2);
+
+          const updateSelect = (id) => {
+            const sel = document.getElementById(id);
+            if (sel) {
+              sel.options[0].value = usdToEgp;
+              sel.options[0].innerHTML = `دولار ($) - البورصة الآن: ${usdToEgp}`;
+              sel.options[1].value = eurToEgp;
+              sel.options[1].innerHTML = `يورو (€) - البورصة الآن: ${eurToEgp}`;
+            }
+          };
+
+          updateSelect('dep_currency');
+          updateSelect('part_rate');
+        }
+      } catch (error) {
+        console.error("فشل الاتصال بالبورصة:", error);
+      }
+    }
+
+    // --- 2. دوال التنسيق والحسابات ---
+    function formatNumberInput(displayEl, hiddenId) {
+      let val = displayEl.value.replace(/,/g, '');
+      if (!isNaN(val) && val !== "") {
+        document.getElementById(hiddenId).value = val;
+        displayEl.value = Number(val).toLocaleString('en-US');
+      } else {
+        document.getElementById(hiddenId).value = "";
+        displayEl.value = "";
+      }
+      if (hiddenId === 'price_real' || hiddenId === 'dep_real') calculateDeposit();
+    }
+
+    function calculateDeposit() {
+      const price = Number(document.getElementById('price_real').value) || 0;
+      const dep = Number(document.getElementById('dep_real').value) || 0;
+      const rate = Number(document.getElementById('dep_currency').value) || 1;
+      const box = document.getElementById('calc_box');
+
+      if (price > 0 && dep > 0) {
+        box.classList.remove('hidden');
+        const egpVal = dep * rate;
+        const remain = price - egpVal; 
+
+        box.innerHTML = `
+            <div class="flex justify-around items-center p-4 bg-black/20 rounded-2xl border border-white/10">
+                <div class="text-center">
+                    <p class="text-gray-400 text-sm mb-1">المدفوع بالمصري</p>
+                    <b class="text-emerald-400 text-2xl font-black">${egpVal.toLocaleString()} ج.م</b>
+                </div>
+                
+                <div class="h-12 w-px bg-white/20"></div>
+                
+                <div class="text-center">
+                    <p class="text-gray-400 text-sm mb-1">المتبقي للتحصيل</p>
+                    <b class="text-red-500 text-2xl font-black underline decoration-double">${remain.toLocaleString()} ج.م</b>
+                </div>
+            </div>
+        `;
+      } else {
+        box.classList.add('hidden');
+      }
+    }
+
+    // --- 3. إدارة النوافذ والعمليات ---
+    function openModal(id) {
+      const modal = document.getElementById(id);
+      if (modal) {
+        modal.style.display = 'flex';
+        fetchLiveExchangeRates();
+      }
+    }
+
+    function closeModal(id) {
+      const modal = document.getElementById(id);
+      if (modal) {
+        modal.style.display = 'none';
+      }
+    }
+
+    // --- 4. عرض التفاصيل (النسخة الكاملة بدون نقص) ---
+    function showDetails(c) {
+      // تجهيز الصور
+      let photosHtml = (c.photos || []).map(p => `
+        <img src="/uploads/${p}" 
+             onclick="window.open('/uploads/${p}')" 
+             class="cursor-pointer hover:scale-105 transition rounded-xl border border-white/10 shadow-lg" 
+             title="اضغط للتكبير">
+      `).join('');
+
+      // حسابات المال
+      let paidManualTotal = (c.payments || []).reduce((acc, p) => acc + (Number(p.val) * Number(p.rate)), 0);
+      let paidBankTotal = (c.paymentHistory || []).reduce((acc, ph) => acc + Number(ph.amount), 0);
+      let depositEgp = (Number(c.dep_value) || 0) * (Number(c.dep_currency_rate) || Number(c.dep_currency) || 1);
+      let currentRemain = (Number(c.price) || 0) - depositEgp - paidManualTotal - paidBankTotal;
+
+      // سجل الدفعات
+      let historyHtml = '';
+
+// 1. عرض كل المدفوعات من المصفوفة الموحدة (الجديدة)
+(c.payments || []).forEach(p => {
+    // تحديد الشكل والاسم بناءً على النوع
+    const isBank = p.type === 'bank_transfer' || p.isBank || p.bankName;
+    const label = isBank ? `تحويل بنكي (${p.bankName || 'حساب بنكي'})` : `دفعة مكتب (${new Date(p.date).toLocaleDateString('ar-EG')})`;
+    const borderColor = isBank ? 'border-blue-400' : 'border-emerald-500';
+    const bgColor = isBank ? 'bg-blue-500/10' : 'bg-white/5';
+    const textColor = isBank ? 'text-blue-400' : 'text-emerald-400';
+
+    historyHtml += `
+      <div class="flex justify-between items-center p-3 ${bgColor} rounded-xl border-r-4 ${borderColor} mb-2 shadow-sm">
+          <span class="text-sm font-bold text-gray-200">${label}</span> 
+          <span class="${textColor} font-black">+ ${(Number(p.val) * Number(p.rate)).toLocaleString()} ج.م</span>
+      </div>`;
+});
+
+// 2. عرض البيانات القديمة (فقط إذا لم تكن موجودة في المصفوفة الجديدة)
+(c.paymentHistory || []).forEach(ph => {
+    // فحص بسيط عشان م نكررش العملية لو موجودة في المصفوفتين
+    const alreadyShown = (c.payments || []).some(p => p.date === ph.date && (p.val * p.rate) === ph.amount);
+    
+    if (!alreadyShown) {
+        historyHtml += `
+          <div class="flex justify-between items-center p-3 bg-blue-500/10 rounded-xl border-r-4 border-blue-400 mb-2 shadow-sm">
+              <span class="text-sm font-bold text-gray-200">تحويل بنكي قديم (${ph.bank || 'بنك'})</span> 
+              <span class="text-blue-400 font-black">+ ${Number(ph.amount).toLocaleString()} ج.م</span>
+          </div>`;
+    }
+});
+      // بناء المحتوى (الهيكل الكامل)
+      document.getElementById('detailsContent').innerHTML = `
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-12 text-right">
+            <div>
+                <div class="flex items-center gap-4 mb-6">
+                    <div class="bg-blue-600 p-4 rounded-2xl shadow-xl">
+                        <i class="fas fa-user-tie text-2xl text-white"></i>
+                    </div>
+                    <div>
+                        <h2 class="text-4xl font-black text-white italic tracking-tight">${c.name}</h2>
+                        <p class="text-yellow-500 font-mono font-bold tracking-widest uppercase text-xs">
+                            ID: ${c.id} | الفرع: <span class="text-white">${c.branchName || c.branch || 'غير مسجل'}</span>
+                            <span class="text-white bg-blue-500/20 px-2 py-0.5 rounded ml-2">
+                                ${c.branchName || c.branch || 'غير مسجل'}
+                            </span>
+                        </p>
+                        <div class="mt-2 text-blue-400 text-[11px] font-bold">
+                           بواسطة: <span class="text-white underline">${c.createdBy || 'النظام'}</span>
+                        </div>
+                    </div>
+
+                    <div class="text-left flex flex-col mr-auto">
+                        <span class="text-[10px] text-emerald-400 font-black uppercase tracking-tighter mb-1 italic text-left">تاريخ ووقت الإضافة</span>
+                        <b class="text-emerald-400 font-mono text-sm">${c.timestamp ? new Date(c.timestamp).toLocaleString('ar-EG', {day:'2-digit', month:'2-digit', year:'numeric', hour:'2-digit', minute:'2-digit', second:'2-digit'}) : 'تاريخ قديم'}</b>
+                    </div>
+                </div>
+
+                <div class="space-y-4 bg-white/5 p-8 rounded-3xl border border-white/10 relative overflow-hidden">
+                    <div class="flex justify-between border-b border-white/5 pb-2"><b>الهاتف:</b> <span class="text-white font-bold">${c.phone || 'N/A'}</span></div>
+                    <div class="flex justify-between border-b border-white/5 pb-2"><b>المركبة:</b> <span class="text-blue-400 font-black text-lg">${c.brand} ${c.model}</span></div>
+                    <div class="flex justify-between border-b border-white/5 pb-2"><b>السعر الكلي:</b> <span class="font-black text-white text-lg">${Number(c.price).toLocaleString()} ج.م</span></div>
+                    
+                    <div class="flex justify-between p-4 bg-blue-500/10 rounded-xl mt-4 border border-blue-500/20">
+                        <b>الحالة الحالية:</b> 
+                        <span class="text-blue-400 font-black uppercase italic text-sm">
+                            ${c.status == 'shipping' ? 'في مرحلة الشحن' : (c.status == 'archived' ? 'مكتمل ومؤرشف' : 'بانتظار فيديو الفحص')}
+                        </span>
+                    </div>
+                </div>
+
+                <div class="mt-8">
+                    <h4 class="text-sm font-bold text-emerald-400 mb-4 italic uppercase flex items-center gap-2">
+                       <i class="fas fa-history"></i> سجل التحصيلات المالية:
+                    </h4>
+                    <div class="max-h-60 overflow-y-auto pr-2 custom-scroll space-y-2">
+                        <div class="flex justify-between items-center p-3 bg-blue-500/20 rounded-xl border-r-4 border-blue-400 shadow-md">
+                            <span class="text-lg font-black text-blue-400 italic underline">عربون الحجز</span> 
+                            <span class="text-white font-black text-xl">${depositEgp.toLocaleString()} ج.م</span>
+                        </div>
+                        ${historyHtml || '<p class="text-gray-600 text-center py-6 italic bg-white/5 rounded-2xl">لا توجد دفعات جزئية مسجلة بعد</p>'}
+                    </div>
+                    
+                    <div class="mt-6 p-5 bg-emerald-500/20 rounded-2xl border border-emerald-500/30 flex justify-between items-center shadow-lg">
+                        <div class="flex flex-col">
+                            <span class="font-bold text-white text-sm">صافي المتبقي للتحصيل</span>
+                            <span class="text-[10px] text-emerald-400/50 italic font-bold">بناءً على سعر الصرف الحالي</span>
+                        </div>
+                        <span class="text-4xl font-black text-emerald-400 drop-shadow-md">${Math.max(0, currentRemain).toLocaleString()} ج.م</span>
+                    </div>
+                </div>
+            </div>
+
+            <div>
+                <h3 class="text-xl font-bold mb-6 italic text-blue-300 flex items-center gap-2">
+                    <i class="fas fa-images"></i> المستندات والملفات المرفقة
+                </h3>
+                <div class="grid grid-cols-3 gap-4 img-grid">
+                    ${photosHtml || '<div class="col-span-3 p-16 bg-white/5 rounded-3xl text-center text-gray-600 italic border-2 border-dashed border-white/5 font-bold">لم يتم رفع صور لهذه المركبة</div>'}
+                </div>
+                
+                <div class="mt-10 p-6 glass-card bg-blue-600/10 border border-blue-500/20 shadow-2xl relative">
+                     <div class="flex justify-between mb-6">
+                        <div class="text-center">
+                            <span class="text-[12px] block text-gray-500 font-bold uppercase tracking-widest mb-1">Sales Person</span>
+                            <b class="text-white bg-white/5 px-4 py-1 rounded-lg border border-white/5">${c.sales || '-'}</b>
+                        </div>
+                        <div class="text-center">
+                            <span class="text-[12px] block text-gray-500 font-bold uppercase tracking-widest mb-1">Supervisor</span>
+                            <b class="text-white bg-white/5 px-4 py-1 rounded-lg border border-white/5">${c.supervisor || '-'}</b>
+                        </div>
+                    </div>
+                    <a href="${c.link}" target="_blank" class="block text-center p-5 btn-grad rounded-2xl font-black text-lg shadow-xl hover:scale-[1.02] transition-transform">
+                        رابط معاينة الفيديو <i class="fas fa-external-link-alt ml-2 text-sm"></i>
+                    </a>
+                </div>
+            </div>
+        </div>
+      `;
+      openModal('detailsModal');
+    }
+    // --- 5. بقية الوظائف (دفع، شحن، حذف) ---
+    let currentId = '';
+    let selectedContractForShipping = null;
+
+    function openPayModal(c, remaining) {
+      currentId = c.id;
+      document.getElementById('payInfo').innerHTML = `
+          العميل: <b class="text-blue-400 font-black text-lg">${c.name}</b><br>
+          المتبقي المطلوب تحصيله: <b class="text-emerald-400 text-2xl font-black">${remaining.toLocaleString()} ج.م</b>
+      `;
+      openModal('payModal');
+    }
+
+    function openShipModal(c) {
+      selectedContractForShipping = c;
+      openModal('shipExportModal');
+    }
+
+    async function confirmExportToShipping() {
+      const months = document.getElementById('export_duration').value;
+      try {
+        const res = await fetch('/contracts/export-to-shipping', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ id: selectedContractForShipping.id, duration: months })
+        });
+        if (res.ok) {
+          Swal.fire({ title: 'تم التصدير!', text: 'تم نقل العقد بنجاح لمرحلة الشحن.', icon: 'success', timer: 2000, showConfirmButton: false, willClose: () => { window.location.reload(); } });
+        } else {
+          const errData = await res.json();
+          Swal.fire('خطأ!', errData.error || 'حدث خطأ غير متوقع', 'error');
+        }
+      } catch (err) { Swal.fire('خطأ!', 'فشل الاتصال بالسيرفر', 'error'); }
+    }
+
+    async function submitPartial() {
+      const amount = document.getElementById('part_real').value;
+      const rate = document.getElementById('part_rate').value;
+      if (!amount || amount <= 0) return Swal.fire('تنبيه', 'برجاء إدخال مبلغ صحيح للتحصيل', 'warning');
+      try {
+        const res = await fetch('/contracts/pay-partial', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ id: currentId, amount: amount, rate: rate })
+        });
+        if (res.ok) {
+          Swal.fire({ title: 'تم التحصيل!', text: 'تم تسجيل المبلغ في سجل العميل.', icon: 'success', willClose: () => { window.location.reload(); } });
+        } else {
+          const errData = await res.json();
+          Swal.fire('خطأ!', errData.error || 'فشل التسجيل', 'error');
+        }
+      } catch (err) { Swal.fire('خطأ!', 'حدثت مشكلة تقنية أثناء التسجيل', 'error'); }
+    }
+
+    async function deleteContract(id) {
+      Swal.fire({
+        title: 'هل أنت متأكد من الحذف؟',
+        text: "سيتم حذف كافة بيانات العقد والصور نهائياً ولا يمكن الرجوع!",
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#ef4444',
+        cancelButtonColor: '#475569',
+        confirmButtonText: 'نعم، احذف الآن',
+        cancelButtonText: 'إلغاء'
+      }).then(async (result) => {
+        if (result.isConfirmed) {
+          try {
+            const res = await fetch('/contracts/delete', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ id: id })
+            });
+            if (res.ok) { window.location.reload(); }
+            else { Swal.fire('فشل!', 'ليس لديك صلاحيات كافية للحذف', 'error'); }
+          } catch (err) { Swal.fire('خطأ!', 'فشل الاتصال بالسيرفر', 'error'); }
+        }
+      });
+    }
+
+    document.addEventListener('DOMContentLoaded', fetchLiveExchangeRates);
+</script>
+</body>
+
+</html>

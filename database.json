@@ -1,0 +1,90 @@
+{
+  "contracts": [],
+  "invoices": [
+    {
+      "id": 1768246010884,
+      "addedBy": "hesham",
+      "salesPerson": "بلال",
+      "branch": "طنطا",
+      "customerName": "محمد",
+      "customerPhone": "01144365046",
+      "carBrand": "كيا",
+      "carModel": "c180",
+      "carYear": "2025",
+      "carColor": "اسود",
+      "vinNumber": "نتثقنم",
+      "price": "90000",
+      "paymentMethod": "Cash",
+      "photos": [],
+      "createdAt": "2026-01-12T19:26:50.884Z"
+    },
+    {
+      "id": 1768236527705,
+      "addedBy": "مدير النظام",
+      "salesPerson": "بلال",
+      "branch": "المهندسين",
+      "customerName": "محمد",
+      "customerPhone": "01144365046",
+      "carBrand": "كيا",
+      "carModel": "c180",
+      "carYear": "2025",
+      "carColor": "اسود",
+      "vinNumber": "نتثقنم",
+      "price": "90000",
+      "paymentMethod": "Cash",
+      "photos": [
+        "captin-1768236527673.jpg"
+      ],
+      "createdAt": "2026-01-12T16:48:47.705Z"
+    },
+    {
+      "id": 1768236427641,
+      "addedBy": "مدير النظام",
+      "salesPerson": "ابرهيم ",
+      "branch": "كفر الشيخ",
+      "customerName": "محمد عباس ",
+      "customerPhone": "011783278",
+      "carBrand": "مرسيدس ",
+      "carModel": "C200",
+      "carYear": "2024",
+      "carColor": "فراني ",
+      "vinNumber": "W1562WI",
+      "price": "2400000",
+      "paymentMethod": "Cash",
+      "photos": [
+        "captin-1768236427454.jpg",
+        "captin-1768236427484.jpg",
+        "captin-1768236427551.jpg",
+        "captin-1768236427568.jpg",
+        "captin-1768236427583.jpg",
+        "captin-1768236427603.jpg"
+      ],
+      "createdAt": "2026-01-12T16:47:07.641Z"
+    },
+    {
+      "id": 1768231323399,
+      "addedBy": "مدير النظام",
+      "salesPerson": "بلال",
+      "branch": "مدينة نصر 1",
+      "customerName": "محمد",
+      "customerPhone": "01144365046",
+      "carBrand": "كيا",
+      "carModel": "c180",
+      "carYear": "2025",
+      "carColor": "اسود",
+      "vinNumber": "نتثقنم",
+      "price": "90000",
+      "paymentMethod": "Cash",
+      "photos": [
+        "captin-1768231323323.jpg",
+        "captin-1768231323327.jpg",
+        "captin-1768231323333.jpg"
+      ],
+      "createdAt": "2026-01-12T15:22:03.399Z"
+    }
+  ],
+  "announcement": {
+    "message": "hhhhhhhh",
+    "time": "2026-01-13T12:11:07.925Z"
+  }
+}

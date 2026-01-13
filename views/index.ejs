@@ -1,0 +1,474 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AL CAPTAIN | لوحة التحكم الاحترافية النخبة</title>
+  <script src="https://unpkg.com/@tailwindcss/browser@4"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Tajawal:wght@400;700;900&display=swap');
+
+    :root {
+      --primary-glow: radial-gradient(rgba(59, 130, 246, 0.15), rgba(59, 130, 246, 0));
+    }
+
+    body {
+      background: linear-gradient(rgba(11, 17, 32, 0.94), rgba(11, 17, 32, 0.99)),
+        url('https://images.unsplash.com/photo-1503376780353-7e6692767b70?auto=format&fit=crop&q=80&w=1920');
+      background-size: cover;
+      background-position: center;
+      background-attachment: fixed;
+      min-height: 100vh;
+      font-family: 'Tajawal', sans-serif;
+      scroll-behavior: smooth;
+    }
+
+    .glass {
+      background: rgba(255, 255, 255, 0.03);
+      backdrop-filter: blur(25px);
+      -webkit-backdrop-filter: blur(25px);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    .glass:hover {
+      background: rgba(255, 255, 255, 0.06);
+      transform: translateY(-8px);
+      border-color: rgba(59, 130, 246, 0.4);
+      box-shadow: 0 20px 40px -15px rgba(0, 0, 0, 0.7);
+    }
+
+    .nav-glass {
+      background: rgba(15, 23, 42, 0.85);
+      backdrop-filter: blur(20px);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    }
+
+    .stat-card::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: var(--primary-glow);
+      pointer-events: none;
+    }
+
+    @keyframes pulse-red {
+      0% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.4); }
+      70% { box-shadow: 0 0 0 15px rgba(239, 68, 68, 0); }
+      100% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0); }
+    }
+
+    .urgent-alert {
+      animation: pulse-red 2s infinite;
+    }
+
+    .custom-scrollbar::-webkit-scrollbar { width: 5px; }
+    .custom-scrollbar::-webkit-scrollbar-track { background: rgba(255, 255, 255, 0.02); }
+    .custom-scrollbar::-webkit-scrollbar-thumb { background: rgba(59, 130, 246, 0.5); border-radius: 10px; }
+
+    .welcome-gradient {
+      background: linear-gradient(90deg, #60a5fa, #a78bfa);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+  </style>
+</head>
+
+<body class="text-white selection:bg-blue-500/30">
+
+  <% if (user.role === 'admin') { %>
+  <div class="container mx-auto px-6 mt-8">
+    <div class="glass p-1 rounded-[2.5rem] bg-gradient-to-r from-amber-500/20 to-transparent">
+      <div class="bg-slate-900/40 rounded-[2.4rem] p-6 flex flex-col md:flex-row gap-6 items-center">
+        <div class="flex-1 w-full">
+          <h4 class="text-amber-400 font-black text-xs mb-3 flex items-center gap-2 uppercase tracking-widest">
+            <i class="fas fa-shield-alt"></i> الإدارة العامة | توجيه الموظفين
+          </h4>
+          <form action="/admin-tools/send-announcement" method="POST" class="flex flex-col md:flex-row gap-4">
+            <input name="message" required class="flex-1 bg-black/30 border border-white/10 rounded-2xl p-4 text-white placeholder-gray-500 outline-none focus:border-amber-500/50 transition-all shadow-inner" placeholder="اكتب تعليماتك هنا لتظهر فوراً لجميع فروع الكابتن...">
+            <button type="submit" class="bg-amber-500 hover:bg-amber-400 text-slate-950 px-8 py-4 rounded-2xl font-black transition-all shadow-lg shadow-amber-500/20 flex items-center justify-center gap-2 group">
+              <span>نشر الآن</span>
+              <i class="fas fa-paper-plane group-hover:translate-x-[-4px] transition-transform"></i>
+            </button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+  <% } %>
+
+  <% if (locals.announcement && announcement.message) { %>
+  <div id="announcementBox" class="fixed bottom-10 left-10 z-[200] hidden max-w-md animate-bounce-in">
+    <div class="glass p-8 rounded-[3rem] border-l-8 border-amber-500 shadow-2xl relative overflow-hidden">
+      <div class="absolute -right-10 -bottom-10 text-white/5 text-9xl rotate-12"><i class="fas fa-bullhorn"></i></div>
+      <div class="flex justify-between items-start mb-4">
+        <span class="bg-amber-500/10 text-amber-500 px-4 py-1 rounded-full text-[10px] font-black uppercase tracking-tighter border border-amber-500/20">تنبيه إداري</span>
+        <button onclick="closeAnnouncement()" class="text-gray-500 hover:text-white transition-colors text-xl">&times;</button>
+      </div>
+      <p class="text-lg font-bold leading-relaxed mb-6"><%= announcement.message %></p>
+      <div class="flex justify-between items-center text-[10px] text-gray-500 font-bold border-t border-white/10 pt-4">
+        <span><i class="fas fa-clock ml-1"></i> <%= new Date(announcement.time).toLocaleTimeString('ar-EG') %></span>
+        <span>المدير العام <i class="fas fa-check-circle text-blue-500"></i></span>
+      </div>
+    </div>
+  </div>
+  <% } %>
+
+  <nav class="nav-glass sticky top-0 z-50 p-4 px-8 lg:px-12 flex justify-between items-center">
+    <div class="flex items-center gap-5 group cursor-pointer" onclick="location.href='/'">
+      <div class="relative">
+        <div class="absolute inset-0 bg-blue-600 blur-lg opacity-40 group-hover:opacity-100 transition-opacity"></div>
+        <div class="bg-gradient-to-br from-blue-500 to-blue-700 p-3.5 rounded-2xl relative shadow-xl shadow-blue-600/20">
+          <i class="fas fa-car-side text-2xl text-white"></i>
+        </div>
+      </div>
+      <div class="hidden sm:block">
+        <h1 class="text-2xl font-black tracking-tighter leading-none">AL CAPTAIN</h1>
+        <p class="text-blue-500 italic text-[10px] font-bold tracking-[0.3em] mt-1">MOTORS SYSTEMS</p>
+      </div>
+    </div>
+
+    <div class="flex items-center gap-4 lg:gap-8">
+      <div class="hidden lg:flex items-center gap-6 border-l border-white/10 pl-8">
+        <div class="text-left-rtl">
+          <p class="text-gray-500 text-[9px] font-black uppercase tracking-widest mb-0.5">User Profile</p>
+          <p class="text-sm font-black italic">Captain/ <span class="welcome-gradient"><%= user.name %></span></p>
+        </div>
+        <div class="bg-white/5 p-3 rounded-2xl border border-white/10">
+          <p class="text-gray-500 text-[8px] font-black uppercase mb-1">Active Branch</p>
+          <p class="text-[11px] font-black text-emerald-400 flex items-center gap-2">
+            <span class="w-1.5 h-1.5 bg-emerald-500 rounded-full animate-pulse"></span>
+            <%= user.branch %>
+          </p>
+        </div>
+      </div>
+
+      <div class="flex items-center gap-3">
+        <button onclick="toggleNotifications()" class="relative bg-white/5 w-12 h-12 rounded-2xl flex items-center justify-center hover:bg-blue-600/20 border border-white/10 transition-all group">
+          <i class="fas fa-bell text-xl group-hover:rotate-12 transition-transform"></i>
+          <% if (locals.notifications && notifications.length > 0) { %>
+          <span class="absolute -top-1 -right-1 bg-red-600 w-5 h-5 rounded-full text-[10px] flex items-center justify-center font-black border-2 border-slate-900 urgent-alert">
+            <%= notifications.length %>
+          </span>
+          <% } %>
+        </button>
+
+        <% if (user.role === 'admin') { %>
+        <a href="/admin" class="bg-white/5 hover:bg-white/10 border border-white/10 p-3 w-12 h-12 rounded-2xl flex items-center justify-center transition-all shadow-xl" title="Admin Panel">
+          <i class="fas fa-cog text-gray-400"></i>
+        </a>
+        <% } %>
+
+        <button onclick="location.href='/logout'" class="bg-red-500/10 hover:bg-red-600 text-red-500 hover:text-white px-6 py-3 rounded-2xl transition-all font-black text-xs flex items-center gap-3 border border-red-500/20">
+          <span class="hidden md:inline">خروج</span>
+          <i class="fas fa-power-off"></i>
+        </button>
+      </div>
+    </div>
+  </nav>
+
+  <div id="notificationModal" class="fixed inset-0 z-[100] hidden items-center justify-center p-4 bg-black/80 backdrop-blur-xl transition-all duration-500">
+    <div class="w-full max-w-3xl bg-slate-950 rounded-[3.5rem] border border-white/10 shadow-[0_0_80px_rgba(0,0,0,0.9)] overflow-hidden scale-95 transition-transform duration-300" id="modalContainer">
+      
+      <div class="p-8 border-b border-white/5 flex justify-between items-center bg-gradient-to-r from-red-600/10 to-transparent">
+        <div class="flex items-center gap-5">
+          <div class="w-14 h-14 bg-red-600 rounded-2xl flex items-center justify-center shadow-lg shadow-red-600/20">
+            <i class="fas fa-exclamation-triangle text-2xl"></i>
+          </div>
+          <div>
+            <h2 class="text-2xl font-black tracking-tight">تنبيهات السداد المباشر</h2>
+            <p class="text-gray-500 text-[10px] font-bold uppercase tracking-[0.2em]">Live Debt Monitoring</p>
+          </div>
+        </div>
+        <button onclick="toggleNotifications()" class="w-12 h-12 bg-white/5 rounded-full flex items-center justify-center hover:bg-red-600 transition-all text-2xl">&times;</button>
+      </div>
+
+      <div class="p-6 max-h-[60vh] overflow-y-auto custom-scrollbar space-y-4">
+        <% if (locals.notifications && notifications.length > 0) { %>
+          <% notifications.forEach(note => { %>
+          <div class="group p-5 rounded-[2rem] bg-white/5 border border-white/5 hover:border-red-500/50 transition-all flex flex-col md:flex-row justify-between items-center gap-6">
+            <div class="flex items-center gap-6 flex-1">
+              <div class="text-center bg-black/40 p-3 rounded-2xl border border-white/5 min-w-[80px]">
+                <p class="text-[9px] text-gray-500 font-black">أيام التأخير</p>
+                <p class="text-2xl font-black text-red-500 animate-pulse"><%= note.days %></p>
+              </div>
+              <div>
+                <div class="flex items-center gap-2 mb-1">
+                  <span class="text-xs font-black text-blue-500">عقد #<%= note.id %></span>
+                  <span class="w-1 h-1 bg-gray-600 rounded-full"></span>
+                  <span class="text-[10px] text-gray-500 font-bold"><%= note.branch || 'المكتب الرئيسي' %></span>
+                </div>
+                <h3 class="text-xl font-black text-white group-hover:text-red-400 transition-colors"><%= note.name %></h3>
+                <p class="text-xs text-gray-400 font-medium italic"><i class="fas fa-car ml-1 text-gray-600"></i> <%= note.carName %></p>
+              </div>
+            </div>
+            <div class="bg-black/40 px-6 py-4 rounded-2xl border border-white/5 text-center min-w-[140px]">
+              <p class="text-[9px] text-gray-500 font-black mb-1 uppercase">المبلغ المطلوب</p>
+              <p class="text-xl font-black text-emerald-500"><%= note.remaining.toLocaleString() %> <span class="text-[10px]">ج.م</span></p>
+            </div>
+          </div>
+          <% }) %>
+        <% } else { %>
+          <div class="text-center py-16">
+            <div class="w-24 h-24 bg-emerald-500/10 rounded-full flex items-center justify-center mx-auto mb-6">
+              <i class="fas fa-check-double text-4xl text-emerald-500"></i>
+            </div>
+            <h3 class="text-xl font-black">لا توجد متأخرات</h3>
+            <p class="text-gray-500 text-sm mt-2 font-bold italic">Excellent! All accounts are up to date.</p>
+          </div>
+        <% } %>
+      </div>
+
+      <div class="p-8 bg-black/40 border-t border-white/5 flex flex-col sm:flex-row justify-between items-center gap-4">
+        <p class="text-[10px] text-gray-600 font-black italic tracking-widest uppercase">
+          <i class="fas fa-info-circle ml-1"></i> Data synced with accounting module
+        </p>
+        <button onclick="toggleNotifications()" class="w-full sm:w-auto bg-blue-600 hover:bg-blue-700 px-10 py-3 rounded-xl font-black text-sm transition-all shadow-lg shadow-blue-600/20">فهمت</button>
+      </div>
+    </div>
+  </div>
+
+  <main class="container mx-auto px-6 py-12">
+    <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-6 mb-16">
+      <div class="glass p-6 rounded-[2.5rem] relative overflow-hidden group border-b-4 border-emerald-500">
+        <div class="flex justify-between items-start mb-4">
+          <div class="bg-emerald-500/10 p-3 rounded-xl border border-emerald-500/20"><i class="fas fa-dollar-sign text-xl text-emerald-500"></i></div>
+          <span class="text-[8px] font-black text-emerald-400 bg-emerald-500/10 px-3 py-1 rounded-full uppercase italic">USD</span>
+        </div>
+        <p class="text-gray-500 text-[10px] font-black mb-1 italic">الدولار الأمريكي</p>
+        <h2 class="text-3xl font-black tracking-tighter text-white mb-2" id="usd-price"><%= (locals.currencies && currencies.usd) ? currencies.usd : '--.--' %></h2>
+        <div class="absolute -bottom-4 -right-4 text-emerald-500/5 text-7xl rotate-12 group-hover:rotate-0 transition-all"><i class="fas fa-dollar-sign"></i></div>
+      </div>
+
+      <div class="glass p-6 rounded-[2.5rem] relative overflow-hidden group border-b-4 border-blue-500">
+        <div class="flex justify-between items-start mb-4">
+          <div class="bg-blue-500/10 p-3 rounded-xl border border-blue-500/20"><i class="fas fa-euro-sign text-xl text-blue-500"></i></div>
+          <span class="text-[8px] font-black text-blue-400 bg-blue-500/10 px-3 py-1 rounded-full uppercase italic">EUR</span>
+        </div>
+        <p class="text-gray-500 text-[10px] font-black mb-1 italic">اليورو الأوروبي</p>
+        <h2 class="text-3xl font-black tracking-tighter text-white mb-2" id="eur-price"><%= (locals.currencies && currencies.eur) ? currencies.eur : '--.--' %></h2>
+        <div class="absolute -bottom-4 -right-4 text-blue-500/5 text-7xl rotate-12 group-hover:rotate-0 transition-all"><i class="fas fa-euro-sign"></i></div>
+      </div>
+
+      <div class="glass p-6 rounded-[2.5rem] relative overflow-hidden group border-b-4 border-cyan-500">
+        <div class="flex justify-between items-start mb-4">
+          <div class="bg-cyan-500/10 p-3 rounded-xl border border-cyan-500/20"><i class="fas fa-landmark text-xl text-cyan-500"></i></div>
+          <span class="text-[8px] font-black text-cyan-400 bg-cyan-500/10 px-3 py-1 rounded-full uppercase italic">AED</span>
+        </div>
+        <p class="text-gray-500 text-[10px] font-black mb-1 italic">الدرهم الإماراتي</p>
+        <h2 class="text-3xl font-black tracking-tighter text-white mb-2" id="aed-price"><%= (locals.currencies && currencies.aed) ? currencies.aed : '--.--' %></h2>
+        <div class="absolute -bottom-4 -right-4 text-cyan-500/5 text-7xl rotate-12 group-hover:rotate-0 transition-all"><i class="fas fa-building-columns"></i></div>
+      </div>
+
+      <div class="glass p-6 rounded-[2.5rem] relative overflow-hidden group border-b-4 border-amber-500">
+        <div class="flex justify-between items-start mb-4">
+          <div class="bg-amber-500/10 p-3 rounded-xl border border-amber-500/20"><i class="fas fa-coins text-xl text-amber-500"></i></div>
+          <span class="text-[8px] font-black text-amber-400 bg-amber-500/10 px-3 py-1 rounded-full uppercase italic">SAR</span>
+        </div>
+        <p class="text-gray-500 text-[10px] font-black mb-1 italic">الريال السعودي</p>
+        <h2 class="text-3xl font-black tracking-tighter text-white mb-2" id="sar-price"><%= (locals.currencies && currencies.sar) ? currencies.sar : '--.--' %></h2>
+        <div class="absolute -bottom-4 -right-4 text-amber-500/5 text-7xl rotate-12 group-hover:rotate-0 transition-all"><i class="fas fa-kaaba"></i></div>
+      </div>
+
+      <div class="glass p-6 rounded-[2.5rem] relative overflow-hidden group border-b-4 border-rose-500">
+        <div class="flex justify-between items-start mb-4">
+          <div class="bg-rose-500/10 p-3 rounded-xl border border-rose-500/20"><i class="fas fa-won-sign text-xl text-rose-500"></i></div>
+          <span class="text-[8px] font-black text-rose-400 bg-rose-500/10 px-3 py-1 rounded-full uppercase italic">KRW</span>
+        </div>
+        <p class="text-gray-500 text-[10px] font-black mb-1 italic">الون الكوري</p>
+        <h2 class="text-3xl font-black tracking-tighter text-white mb-2" id="krw-price"><%= (locals.currencies && currencies.krw) ? currencies.krw : '--.--' %></h2>
+        <div class="absolute -bottom-4 -right-4 text-rose-500/5 text-7xl rotate-12 group-hover:rotate-0 transition-all"><i class="fas fa-won-sign"></i></div>
+      </div>
+    </div>
+
+    <h2 class="text-gray-500 font-black mb-10 flex items-center gap-5 px-4 text-[10px] uppercase tracking-[0.5em]">
+      <span class="w-16 h-[2px] bg-blue-600/50"></span> Management Hub
+    </h2>
+
+    <div class="grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-6 mb-24">
+      <a href="/contracts" class="glass p-10 rounded-[3rem] text-center group border-b-8 border-blue-600 shadow-xl">
+        <div class="w-20 h-20 bg-blue-600/10 rounded-3xl mx-auto flex items-center justify-center mb-6 group-hover:scale-110 group-hover:rotate-6 transition-all duration-500">
+          <i class="fas fa-file-contract text-4xl text-blue-500"></i>
+        </div>
+        <h3 class="text-lg font-black mb-1">التعاقدات</h3>
+        <p class="text-[8px] text-gray-500 font-bold uppercase tracking-widest">Contracts</p>
+      </a>
+
+      <a href="/shipping" class="glass p-10 rounded-[3rem] text-center group border-b-8 border-orange-500 shadow-xl">
+        <div class="w-20 h-20 bg-orange-600/10 rounded-3xl mx-auto flex items-center justify-center mb-6 group-hover:scale-110 group-hover:rotate-6 transition-all duration-500">
+          <i class="fas fa-truck-container text-4xl text-orange-500"></i>
+        </div>
+        <h3 class="text-lg font-black mb-1">الشحن</h3>
+        <p class="text-[8px] text-gray-500 font-bold uppercase tracking-widest">Logistics</p>
+      </a>
+
+      <a href="/transfers" class="glass p-10 rounded-[3rem] text-center group border-b-8 border-emerald-600 shadow-xl">
+        <div class="w-20 h-20 bg-emerald-600/10 rounded-3xl mx-auto flex items-center justify-center mb-6 group-hover:scale-110 group-hover:rotate-6 transition-all duration-500">
+          <i class="fas fa-vault text-4xl text-emerald-500"></i>
+        </div>
+        <h3 class="text-lg font-black mb-1">الخزينة</h3>
+        <p class="text-[8px] text-gray-500 font-bold uppercase tracking-widest">Treasury</p>
+      </a>
+
+      <a href="/bank-accounts" class="glass p-10 rounded-[3rem] text-center group border-b-8 border-indigo-600 shadow-xl">
+        <div class="w-20 h-20 bg-indigo-600/10 rounded-3xl mx-auto flex items-center justify-center mb-6 group-hover:scale-110 group-hover:rotate-6 transition-all duration-500">
+          <i class="fas fa-university text-4xl text-indigo-500"></i>
+        </div>
+        <h3 class="text-lg font-black mb-1">البنوك</h3>
+        <p class="text-[8px] text-gray-500 font-bold uppercase tracking-widest">Banking</p>
+      </a>
+
+      <a href="/archive" class="glass p-10 rounded-[3rem] text-center group border-b-8 border-purple-600 shadow-xl">
+        <div class="w-20 h-20 bg-purple-600/10 rounded-3xl mx-auto flex items-center justify-center mb-6 group-hover:scale-110 group-hover:rotate-6 transition-all duration-500">
+          <i class="fas fa-folder-open text-4xl text-purple-500"></i>
+        </div>
+        <h3 class="text-lg font-black mb-1">الأرشيف</h3>
+        <p class="text-[8px] text-gray-500 font-bold uppercase tracking-widest">Archive</p>
+      </a>
+
+      <a href="/ready-stock" class="glass p-10 rounded-[3rem] text-center group border-b-8 border-rose-600 shadow-xl">
+        <div class="w-20 h-20 bg-rose-600/10 rounded-3xl mx-auto flex items-center justify-center mb-6 group-hover:scale-110 group-hover:rotate-6 transition-all duration-500">
+          <i class="fas fa-fire-alt text-4xl text-rose-500"></i>
+        </div>
+        <h3 class="text-lg font-black mb-1">فوري</h3>
+        <p class="text-[8px] text-gray-500 font-bold uppercase tracking-widest">Stock</p>
+      </a>
+    </div>
+
+    <div class="relative bg-black/20 rounded-[4rem] p-12 border border-white/5 overflow-hidden">
+      <div class="absolute top-0 right-0 w-full h-full opacity-10 pointer-events-none">
+        <svg class="w-full h-full" viewBox="0 0 100 100" preserveAspectRatio="none">
+          <path d="M0,100 Q25,50 50,75 T100,25" fill="none" stroke="white" stroke-width="0.1"></path>
+        </svg>
+      </div>
+
+      <div class="flex items-center justify-between mb-12 relative z-10">
+        <h2 class="text-3xl font-black flex items-center gap-4">
+          <span class="w-2 h-10 bg-blue-600 rounded-full"></span>
+          تحليلات الأداء المباشر
+        </h2>
+        <div class="bg-blue-600/10 px-6 py-2 rounded-full border border-blue-600/20">
+          <span class="text-blue-500 text-xs font-black uppercase tracking-widest">Real-time Stats</span>
+        </div>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-12 relative z-10">
+        <div class="stat-card relative p-10 rounded-[3rem] bg-white/5 border border-white/5 hover:border-blue-500/30 transition-all">
+          <p class="text-gray-500 text-xs font-black uppercase tracking-widest mb-4 italic">قيد الشحن الدولي</p>
+          <div class="flex justify-between items-end">
+            <h4 class="text-8xl font-black tracking-tighter text-blue-500"><%= locals.shippingCount || 0 %></h4>
+            <div class="bg-blue-600/20 p-4 rounded-2xl"><i class="fas fa-ship text-2xl text-blue-500"></i></div>
+          </div>
+        </div>
+
+        <div class="stat-card relative p-10 rounded-[3rem] bg-white/5 border border-white/5 hover:border-emerald-500/30 transition-all">
+          <p class="text-gray-500 text-xs font-black uppercase tracking-widest mb-4 italic">إجمالي المحصل النقدي</p>
+          <div class="flex justify-between items-end">
+            <div>
+              <h4 class="text-4xl font-black text-emerald-500 mb-1"><%= (locals.totalPayments || 0).toLocaleString() %></h4>
+              <p class="text-xs text-emerald-600 font-black tracking-[0.2em] uppercase">Egyptian Pound</p>
+            </div>
+            <div class="bg-emerald-600/20 p-4 rounded-2xl"><i class="fas fa-chart-line text-2xl text-emerald-500"></i></div>
+          </div>
+        </div>
+
+        <div class="stat-card relative p-10 rounded-[3rem] bg-white/5 border border-white/5 hover:border-purple-500/30 transition-all">
+          <p class="text-gray-500 text-xs font-black uppercase tracking-widest mb-4 italic">العقود الجارية</p>
+          <div class="flex justify-between items-end">
+            <h4 class="text-8xl font-black tracking-tighter text-purple-500"><%= locals.activeCount || 0 %></h4>
+            <div class="bg-purple-600/20 p-4 rounded-2xl"><i class="fas fa-file-invoice-dollar text-2xl text-purple-500"></i></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <footer class="mt-24 py-16 border-t border-white/5 text-center bg-black/40">
+    <div class="container mx-auto">
+      <h2 class="text-2xl font-black tracking-tighter text-white/20 mb-6">AL CAPTAIN MOTORS</h2>
+      <p class="text-gray-600 text-[9px] font-black uppercase tracking-[0.5em] mb-8">Premium Enterprise Resource Planning | v4.2.5 Stable</p>
+      
+      <div class="flex flex-col items-center gap-4">
+        <div class="h-[1px] w-24 bg-gradient-to-r from-transparent via-blue-600 to-transparent"></div>
+        <p class="text-gray-500 text-xs font-bold italic tracking-wide">
+          Crafted with Passion by <span class="text-blue-500 font-black uppercase tracking-widest ml-1">Eng. Bilal Hesham</span>
+        </p>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    // التحكم في ظهور الإعلانات
+    function checkAnnouncement() {
+      const box = document.getElementById('announcementBox');
+      if (!box) return;
+      const currentId = "<%= (locals.announcement) ? announcement.time : '' %>";
+      const lastId = localStorage.getItem('cap_last_ann_id');
+      if (currentId !== lastId) {
+        box.classList.remove('hidden');
+        box.classList.add('flex');
+      }
+    }
+
+    function closeAnnouncement() {
+      const box = document.getElementById('announcementBox');
+      const currentId = "<%= (locals.announcement) ? announcement.time : '' %>";
+      box.style.opacity = '0';
+      box.style.transform = 'translateX(-100px)';
+      setTimeout(() => {
+        box.classList.add('hidden');
+        localStorage.setItem('cap_last_ann_id', currentId);
+      }, 500);
+    }
+
+    // مودال الإشعارات
+    function toggleNotifications() {
+      const modal = document.getElementById('notificationModal');
+      const container = document.getElementById('modalContainer');
+      if (modal.classList.contains('hidden')) {
+        modal.classList.remove('hidden');
+        modal.classList.add('flex');
+        setTimeout(() => { container.classList.remove('scale-95'); container.classList.add('scale-100'); }, 10);
+        document.body.style.overflow = 'hidden';
+      } else {
+        container.classList.remove('scale-100');
+        container.classList.add('scale-95');
+        setTimeout(() => {
+          modal.classList.add('hidden');
+          modal.classList.remove('flex');
+        }, 300);
+        document.body.style.overflow = 'auto';
+      }
+    }
+
+    // العملات (تم تعطيل الجلب القديم لأنه يتم من السيرفر الآن لزيادة السرعة)
+    async function updateCurrencyFallback() {
+      // هذا الكود يعمل فقط في حالة عدم وصول بيانات من السيرفر
+      if (document.getElementById('usd-price').innerText === '--.--') {
+          try {
+            const res = await fetch('https://open.er-api.com/v6/latest/USD');
+            const data = await res.json();
+            if (data && data.rates) {
+              const egp = data.rates.EGP;
+              document.getElementById('usd-price').innerText = egp.toFixed(2);
+              document.getElementById('eur-price').innerText = (egp / data.rates.EUR).toFixed(2);
+              document.getElementById('sar-price').innerText = (egp / data.rates.SAR).toFixed(2);
+            }
+          } catch (e) { console.log("Currency sync failed."); }
+      }
+    }
+
+    window.onclick = (e) => {
+      const modal = document.getElementById('notificationModal');
+      if (e.target == modal) toggleNotifications();
+    };
+
+    window.onload = () => {
+      checkAnnouncement();
+      updateCurrencyFallback();
+    };
+  </script>
+</body>
+</html>

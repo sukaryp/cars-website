@@ -1,0 +1,30 @@
+[
+  {
+    "username": "admin",
+    "password": "123",
+    "role": "admin",
+    "name": "المدير العام",
+    "branch": "الكل"
+  },
+  {
+    "username": "cairo1",
+    "password": "123",
+    "role": "branch",
+    "name": "موظف القاهرة",
+    "branch": "كفر الشيخ"
+  },
+  {
+    "name": "حاتم ",
+    "username": "HATEM",
+    "password": "123456",
+    "branch": "كفر الشيخ",
+    "role": "branch"
+  },
+  {
+    "name": "بلال",
+    "username": "hesham",
+    "password": "12345",
+    "branch": "مدينة نصر 1",
+    "role": "branch"
+  }
+]

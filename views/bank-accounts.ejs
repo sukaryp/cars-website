@@ -1,0 +1,338 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>نظام المدفوعات الذكي | AL-CAPTIN</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Tajawal:wght@400;700;900&display=swap');
+
+    body {
+      background: #0b1120;
+      color: white;
+      font-family: 'Tajawal', sans-serif;
+      overflow-x: hidden;
+    }
+
+    .glass-card {
+      background: rgba(255, 255, 255, 0.02);
+      backdrop-filter: blur(20px);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 24px;
+      transition: all 0.3s ease;
+    }
+
+    .glass-input {
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 12px;
+      padding: 12px;
+      width: 100%;
+      color: white;
+      outline: none;
+      transition: 0.3s;
+    }
+
+    .glass-input:focus {
+      border-color: #10b981;
+      background: rgba(255, 255, 255, 0.1);
+      box-shadow: 0 0 15px rgba(16, 185, 129, 0.2);
+    }
+
+    .account-card {
+      cursor: pointer;
+      border: 2px solid transparent;
+      transition: all 0.3s;
+    }
+
+    .account-card.selected {
+      border-color: #10b981 !important;
+      background: rgba(16, 185, 129, 0.1) !important;
+      transform: scale(1.02);
+    }
+
+    .loading-pulse {
+      animation: pulse 2s infinite;
+    }
+
+    @keyframes pulse {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.5; }
+    }
+
+    ::-webkit-scrollbar { width: 5px; }
+    ::-webkit-scrollbar-thumb { background: #10b981; border-radius: 10px; }
+  </style>
+</head>
+
+<body class="p-4 md:p-10">
+
+  <div class="max-w-7xl mx-auto">
+    <div class="flex flex-col md:flex-row justify-between items-center mb-10 gap-6">
+      <div class="glass-card p-6 border-r-8 border-emerald-500">
+        <h1 class="text-3xl font-black italic uppercase tracking-widest text-emerald-500">Payments <span class="text-white">System</span></h1>
+        <p class="text-gray-400 text-sm flex items-center gap-2">
+          <span id="api-status" class="w-2 h-2 bg-emerald-500 rounded-full loading-pulse"></span>
+          أسعار الصرف مربوطة بالبورصة العالمية مباشرة
+        </p>
+      </div>
+      <div class="flex gap-4">
+        <a href="/contracts" class="bg-white/5 border border-white/10 px-6 py-3 rounded-2xl font-bold hover:bg-white/10 transition-all flex items-center gap-2">
+          <i class="fas fa-file-contract"></i> التعاقدات
+        </a>
+        <a href="/" class="bg-white/5 border border-white/10 px-6 py-3 rounded-2xl font-bold hover:bg-white/10 transition-all flex items-center gap-2">
+          <i class="fas fa-home"></i> الرئيسية
+        </a>
+      </div>
+    </div>
+
+    <h3 class="text-emerald-500 font-bold mb-4 flex items-center gap-2"><i class="fas fa-university"></i> حسابات الشركة (للسداد)</h3>
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-12">
+      <div class="glass-card p-4 border-b-4 border-orange-500">
+        <h4 class="text-orange-500 font-bold mb-2 text-[11px] uppercase italic">بنك مصر (EGP)</h4>
+        <div class="flex justify-between items-center bg-black/40 p-2 rounded-lg">
+          <span class="font-mono text-xs">5630001000001562</span>
+          <i onclick="copyText('5630001000001562')" class="fas fa-copy text-emerald-500 cursor-pointer"></i>
+        </div>
+      </div>
+      <div class="glass-card p-4 border-b-4 border-emerald-500">
+        <h4 class="text-emerald-500 font-bold mb-2 text-[11px] uppercase italic">بنك مصر (USD)</h4>
+        <div class="flex justify-between items-center bg-black/40 p-2 rounded-lg">
+          <span class="font-mono text-xs">1590120000002147</span>
+          <i onclick="copyText('1590120000002147')" class="fas fa-copy text-emerald-500 cursor-pointer"></i>
+        </div>
+      </div>
+      <div class="glass-card p-4 border-b-4 border-yellow-500">
+        <h4 class="text-yellow-500 font-bold mb-2 text-[11px] uppercase italic">بنك مصر (T)</h4>
+        <div class="flex justify-between items-center bg-black/40 p-2 rounded-lg">
+          <span class="font-mono text-xs">1590333000071723</span>
+          <i onclick="copyText('1590333000071723')" class="fas fa-copy text-emerald-500 cursor-pointer"></i>
+        </div>
+      </div>
+      <div class="glass-card p-4 border-b-4 border-red-500">
+        <h4 class="text-red-500 font-bold mb-2 text-[11px] uppercase italic">بنك القاهرة (EGP)</h4>
+        <div class="flex justify-between items-center bg-black/40 p-2 rounded-lg">
+          <span class="font-mono text-xs">01905010255424</span>
+          <i onclick="copyText('01905010255424')" class="fas fa-copy text-emerald-500 cursor-pointer"></i>
+        </div>
+      </div>
+      <div class="glass-card p-4 border-b-4 border-blue-500">
+        <h4 class="text-blue-500 font-bold mb-2 text-[11px] uppercase italic">بنك القاهرة (USD)</h4>
+        <div class="flex justify-between items-center bg-black/40 p-2 rounded-lg">
+          <span class="font-mono text-xs">01906010093577</span>
+          <i onclick="copyText('01906010093577')" class="fas fa-copy text-emerald-500 cursor-pointer"></i>
+        </div>
+      </div>
+      <div class="glass-card p-4 border-b-4 border-pink-500">
+        <h4 class="text-pink-500 font-bold mb-2 text-[11px] uppercase italic">InstaPay (وليد رمضان)</h4>
+        <div class="flex justify-between items-center bg-black/40 p-2 rounded-lg">
+          <span class="font-mono text-xs">01033377747</span>
+          <i onclick="copyText('01033377747')" class="fas fa-copy text-emerald-500 cursor-pointer"></i>
+        </div>
+      </div>
+      <div class="glass-card p-4 border-b-4 border-indigo-500">
+        <h4 class="text-indigo-500 font-bold mb-2 text-[11px] uppercase italic">Sparkasse (EUR)</h4>
+        <div class="flex justify-between items-center bg-black/40 p-2 rounded-lg">
+          <span class="font-mono text-[10px]">DE51420500010102009384</span>
+          <i onclick="copyText('DE51420500010102009384')" class="fas fa-copy text-emerald-500 cursor-pointer"></i>
+        </div>
+      </div>
+    </div>
+
+    <div class="glass-card p-8 border-t-8 border-emerald-500 bg-emerald-500/5 shadow-2xl">
+      <h2 class="text-2xl font-black mb-8 flex items-center gap-3">
+        <i class="fas fa-cash-register text-emerald-500"></i>
+        تسجيل تحويل بنكي جديد
+      </h2>
+
+      <form action="/bank-accounts/process" method="POST" enctype="multipart/form-data" class="space-y-8" onsubmit="showLoading()">
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+          <div class="space-y-2">
+            <label class="text-xs font-bold text-emerald-500 uppercase">1. العميل / رقم التعاقد</label>
+            <select name="customerId" class="glass-input" required>
+              <option value="" disabled selected>اختر العميل المستهدف...</option>
+              <% if(typeof contracts !== 'undefined') { %>
+                <% contracts.forEach(c => { %>
+                  <option value="<%= c.id %>">[ <%= c.id %> ] - <%= c.name %></option>
+                <% }) %>
+              <% } %>
+            </select>
+          </div>
+
+          <div class="space-y-2">
+            <label class="text-xs font-bold text-emerald-500 uppercase">2. العملة والمعدل</label>
+            <div class="flex gap-2">
+              <select id="currency" name="currency" class="glass-input w-1/3" onchange="updateRateFromAPI()">
+                <option value="EGP">EGP</option>
+                <option value="USD">USD</option>
+                <option value="EUR">EUR</option>
+              </select>
+              <div class="relative flex-1">
+                <input type="number" id="exchangeRate" name="exchangeRate" step="0.01" value="1" class="glass-input text-center font-bold text-emerald-400" oninput="calculateTotal()">
+              </div>
+            </div>
+          </div>
+
+          <div class="space-y-2">
+            <label class="text-xs font-bold text-emerald-500 uppercase">3. المبلغ المحول</label>
+            <input type="number" id="amount" name="amount" placeholder="0.00" class="glass-input text-xl font-black" required oninput="calculateTotal()">
+          </div>
+        </div>
+
+        <div class="space-y-4">
+          <label class="text-xs font-bold text-emerald-500 uppercase">4. الحساب الذي استلم المبلغ</label>
+          <input type="hidden" name="bankAccount" id="selectedAccount" required>
+          <div class="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-7 gap-3">
+            <div onclick="selectAccount('مصر جني', this)" class="account-card p-3 glass-card rounded-xl text-center group">
+              <i class="fas fa-university text-orange-400 mb-1"></i>
+              <p class="text-[9px] font-bold">مصر EGP</p>
+            </div>
+            <div onclick="selectAccount('مصر دولار', this)" class="account-card p-3 glass-card rounded-xl text-center group">
+              <i class="fas fa-dollar-sign text-emerald-400 mb-1"></i>
+              <p class="text-[9px] font-bold">مصر USD</p>
+            </div>
+            <div onclick="selectAccount('مصر T', this)" class="account-card p-3 glass-card rounded-xl text-center group">
+              <i class="fas fa-vault text-yellow-400 mb-1"></i>
+              <p class="text-[9px] font-bold">مصر T</p>
+            </div>
+            <div onclick="selectAccount('القاهرة جني', this)" class="account-card p-3 glass-card rounded-xl text-center group">
+              <i class="fas fa-landmark text-red-400 mb-1"></i>
+              <p class="text-[9px] font-bold">قاهرة EGP</p>
+            </div>
+            <div onclick="selectAccount('القاهرة دولار', this)" class="account-card p-3 glass-card rounded-xl text-center group">
+              <i class="fas fa-hand-holding-usd text-blue-400 mb-1"></i>
+              <p class="text-[9px] font-bold">قاهرة USD</p>
+            </div>
+            <div onclick="selectAccount('InstaPay', this)" class="account-card p-3 glass-card rounded-xl text-center group">
+              <i class="fas fa-mobile-alt text-pink-400 mb-1"></i>
+              <p class="text-[9px] font-bold">InstaPay</p>
+            </div>
+            <div onclick="selectAccount('ألمانيا EUR', this)" class="account-card p-3 glass-card rounded-xl text-center group">
+              <i class="fas fa-euro-sign text-indigo-400 mb-1"></i>
+              <p class="text-[9px] font-bold">ألمانيا</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 items-center pt-6 border-t border-white/10">
+          <div class="space-y-2">
+            <label class="text-xs font-bold text-emerald-500 uppercase">5. صورة الإيصال (إجباري)</label>
+            <input type="file" name="receiptImage" class="glass-input border-dashed border-2 border-emerald-500/30" accept="image/*" required>
+          </div>
+
+          <div class="bg-emerald-500/10 p-6 rounded-2xl border border-emerald-500/20 flex justify-between items-center">
+            <div>
+              <p class="text-gray-400 text-xs mb-1">صافي المبلغ بالجنية المصري:</p>
+              <span id="finalDisplay" class="text-3xl font-black text-emerald-500">0.00 EGP</span>
+            </div>
+            <button type="submit" class="bg-emerald-600 hover:bg-emerald-500 text-white font-black px-10 py-4 rounded-xl shadow-lg transition-all transform hover:scale-105 active:scale-95">
+              تأكيد وخصم
+            </button>
+          </div>
+        </div>
+      </form>
+    </div>
+
+    <div class="mt-12 glass-card p-8 border-b-8 border-blue-500">
+      <h3 class="text-xl font-bold mb-6 flex items-center gap-3">
+        <i class="fas fa-history text-blue-500"></i>
+        آخر التحويلات التي تمت
+      </h3>
+      <div class="overflow-x-auto">
+        <table class="w-full text-right">
+          <thead>
+            <tr class="text-emerald-500 text-xs uppercase border-b border-white/10">
+              <th class="pb-4">التاريخ</th>
+              <th class="pb-4">العميل</th>
+              <th class="pb-4">المبلغ</th>
+              <th class="pb-4">الحساب المستلم</th>
+              <th class="pb-4">الحالة</th>
+            </tr>
+          </thead>
+          <tbody class="text-sm">
+            <% if (typeof allTransactions !== 'undefined' && allTransactions.length > 0) { %>
+              <% allTransactions.forEach(t => { %>
+                <tr class="border-b border-white/5 hover:bg-white/5 transition-all">
+                  <td class="py-4 text-gray-400"><%= t.date %></td>
+                  <td class="py-4 font-bold italic"><%= t.clientName %></td>
+                  <td class="py-4 text-emerald-400 font-bold"><%= Number(t.amount).toLocaleString() %> EGP</td>
+                  <td class="py-4 text-gray-300"><%= t.bank %></td>
+                  <td class="py-4">
+                    <% if(t.receipt) { %>
+                      <a href="/uploads/<%= t.receipt %>" target="_blank" class="text-blue-400 hover:underline">
+                        <i class="fas fa-image"></i> الإيصال
+                      </a>
+                    <% } else { %>
+                      <span class="text-gray-500">لا يوجد</span>
+                    <% } %>
+                  </td>
+                </tr>
+              <% }) %>
+            <% } else { %>
+              <tr>
+                <td colspan="5" class="text-center py-10 text-gray-500 italic">لا توجد عمليات مسجلة حتى الآن</td>
+              </tr>
+            <% } %>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    let globalRates = { USD: 50.00, EUR: 55.00, EGP: 1 };
+
+    async function fetchLiveRates() {
+      try {
+        const response = await fetch('https://open.er-api.com/v6/latest/EGP');
+        const data = await response.json();
+        if (data.result === "success") {
+          globalRates.USD = (1 / data.rates.USD).toFixed(2);
+          globalRates.EUR = (1 / data.rates.EUR).toFixed(2);
+          document.getElementById('api-status').style.backgroundColor = '#3b82f6';
+          document.getElementById('api-status').classList.remove('loading-pulse');
+        }
+      } catch (error) { console.warn("Using offline rates"); }
+    }
+
+    function updateRateFromAPI() {
+      const currency = document.getElementById('currency').value;
+      const rateInput = document.getElementById('exchangeRate');
+      rateInput.value = currency === 'EGP' ? 1 : globalRates[currency];
+      rateInput.readOnly = (currency === 'EGP');
+      calculateTotal();
+    }
+
+    function calculateTotal() {
+      const amount = document.getElementById('amount').value || 0;
+      const rate = document.getElementById('exchangeRate').value || 1;
+      const total = (amount * rate).toLocaleString('en-US', { minimumFractionDigits: 2 });
+      document.getElementById('finalDisplay').innerText = total + ' EGP';
+    }
+
+    function selectAccount(name, el) {
+      document.querySelectorAll('.account-card').forEach(c => c.classList.remove('selected'));
+      el.classList.add('selected');
+      document.getElementById('selectedAccount').value = name;
+    }
+
+    function copyText(text) {
+      navigator.clipboard.writeText(text);
+      Swal.fire({ toast: true, position: 'top-end', showConfirmButton: false, timer: 2000, icon: 'success', title: 'تم نسخ الرقم', background: '#1e293b', color: '#fff' });
+    }
+
+    function showLoading() {
+      Swal.fire({ title: 'جاري الحفظ...', allowOutsideClick: false, didOpen: () => { Swal.showLoading(); } });
+    }
+
+    window.onload = async () => {
+      await fetchLiveRates();
+      updateRateFromAPI();
+    };
+  </script>
+</body>
+</html>

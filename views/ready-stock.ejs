@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>إدارة المبيعات | AL-CAPTIN</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Tajawal:wght@400;700;900&display=swap');
+        
+        body { background: #0b1120; color: white; font-family: 'Tajawal', sans-serif; }
+        
+        /* تحسين السكرول بار */
+        .custom-scrollbar::-webkit-scrollbar { height: 8px; }
+        .custom-scrollbar::-webkit-scrollbar-track { background: rgba(255,255,255,0.05); }
+        .custom-scrollbar::-webkit-scrollbar-thumb { background: #10b981; border-radius: 10px; }
+
+        .glass-card { background: rgba(30, 41, 59, 0.5); backdrop-filter: blur(12px); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 28px; }
+        .glass-input { background: rgba(15, 23, 42, 0.8) !important; border: 1px solid rgba(255, 255, 255, 0.15) !important; color: white !important; padding: 14px; border-radius: 16px; outline: none; font-size: 15px; }
+        .glass-input:focus { border-color: #10b981 !important; box-shadow: 0 0 20px rgba(16, 185, 129, 0.2); }
+        
+        .btn-main { background: linear-gradient(135deg, #10b981, #059669); transition: 0.3s; cursor: pointer; }
+        .btn-main:hover { transform: translateY(-3px); box-shadow: 0 12px 25px rgba(16, 185, 129, 0.4); }
+        
+        .table-header { background: rgba(16, 185, 129, 0.15); color: #10b981; }
+        .modal-blur { display: none; position: fixed; inset: 0; background: rgba(0, 0, 0, 0.85); backdrop-filter: blur(12px); z-index: 1000; align-items: center; justify-content: center; }
+        
+        option { background: #1e293b; color: white; }
+    </style>
+</head>
+<body class="p-4 md:p-10">
+
+    <div class="max-w-[1650px] mx-auto">
+        <div class="flex flex-col md:flex-row justify-between items-center mb-12 gap-8">
+            <div class="text-right">
+                <h1 class="text-5xl font-black text-white tracking-tighter">AL-CAPTIN <span class="text-emerald-500 italic">PRO</span></h1>
+                <p class="text-emerald-400/70 mt-2 font-bold text-lg">نظام إدارة فواتير مبيعات الفروع</p>
+            </div>
+            <button onclick="openModal('addInvoiceModal')" class="btn-main px-10 py-5 rounded-2xl font-black text-xl flex items-center gap-4 shadow-2xl">
+                <i class="fas fa-plus-circle text-2xl"></i> تسجيل بيعة جديدة
+            </button>
+        </div>
+
+        <div class="glass-card shadow-2xl overflow-hidden border border-white/5">
+            <div class="overflow-x-auto custom-scrollbar">
+                <table class="w-full text-right min-w-[1300px] border-collapse">
+                    <thead>
+                        <tr class="table-header">
+                            <th class="p-6 text-sm font-black uppercase">التاريخ والوقت</th>
+                            <th class="p-6 text-sm font-black uppercase">الفرع</th>
+                            <th class="p-6 text-sm font-black uppercase">العميل</th>
+                            <th class="p-6 text-sm font-black uppercase">بيانات السيارة والشاسيه</th>
+                            <th class="p-6 text-sm font-black uppercase">المبلغ</th>
+                            <th class="p-6 text-sm font-black uppercase">السيلز</th>
+                            <th class="p-6 text-sm font-black uppercase">المسجل بواسطة</th>
+                            <th class="p-6 text-center text-sm font-black uppercase">الصور</th>
+                            <th class="p-6 text-center text-sm font-black uppercase">الإجراءات</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-white/10">
+                        <% if (typeof invoices !== 'undefined' && invoices.length > 0) { %>
+                            <% invoices.forEach(inv => { %>
+                                <tr class="hover:bg-white/[0.04] transition-all group">
+                                    <td class="p-6 whitespace-nowrap">
+                                        <div class="text-md font-bold text-white"><%= new Date(inv.createdAt).toLocaleDateString('ar-EG') %></div>
+                                        <div class="text-xs text-emerald-500 font-mono mt-1"><%= new Date(inv.createdAt).toLocaleTimeString('ar-EG', {hour:'2-digit', minute:'2-digit'}) %></div>
+                                    </td>
+                                    
+                                    <td class="p-6">
+                                        <span class="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-emerald-500 text-black text-sm font-black shadow-lg">
+                                            <i class="fas fa-store-alt text-xs"></i>
+                                            <%= inv.branch %>
+                                        </span>
+                                    </td>
+
+                                    <td class="p-6 whitespace-nowrap">
+                                        <div class="text-lg font-black text-white group-hover:text-emerald-400 transition-colors"><%= inv.customerName %></div>
+                                        <div class="text-sm text-gray-400 font-mono mt-1"><i class="fas fa-phone-alt text-[15px] ml-1"></i><%= inv.customerPhone %></div>
+                                    </td>
+
+                                    <td class="p-6">
+                                        <div class="text-md font-black text-white"><%= inv.carBrand %> <%= inv.carModel %> (<%= inv.carYear %>)</div>
+                                        <div class="flex items-center gap-2 mt-2 text-xs">
+                                            <span class="text-gray-400">اللون: <b class="text-white"><%= inv.carColor %></b></span>
+                                            <span class="text-emerald-500 font-mono bg-emerald-500/10 px-2 py-0.5 rounded border border-emerald-500/20">VIN: <%= inv.vinNumber %></span>
+                                        </div>
+                                    </td>
+
+                                    <td class="p-6">
+                                        <div class="text-xl font-black text-white tracking-tight"><%= Number(inv.price).toLocaleString() %> <small class="text-emerald-500 text-xs">EGP</small></div>
+                                        <div class="text-[10px] bg-white/5 text-gray-400 px-2 py-1 rounded inline-block mt-1 font-bold"><%= inv.paymentMethod %></div>
+                                    </td>
+
+                                    <td class="p-6">
+                                        <div class="flex items-center gap-2 text-blue-400 font-bold">
+                                            <i class="fas fa-user-tie text-xs opacity-60"></i>
+                                            <span class="text-md"><%= inv.salesPerson %></span>
+                                        </div>
+                                    </td>
+
+                                    <td class="p-6">
+                                        <div class="flex items-center gap-3 bg-white/5 p-2 rounded-2xl border border-white/5">
+                                            <div class="w-8 h-8 rounded-full bg-emerald-500/20 flex items-center justify-center text-emerald-400">
+                                                <i class="fas fa-user-check text-xs"></i>
+                                            </div>
+                                            <span class="text-sm font-black text-white italic tracking-wide">
+                                                <%= inv.addedBy %>
+                                            </span>
+                                        </div>
+                                    </td>
+
+                                    <td class="p-6">
+                                        <div class="flex -space-x-3 justify-center">
+                                            <% if(inv.photos && inv.photos.length > 0) { %>
+                                                <% inv.photos.slice(0, 3).forEach(img => { %>
+                                                    <img src="/uploads/<%= img %>" class="h-12 w-12 rounded-2xl border-4 border-[#0b1120] object-cover shadow-2xl hover:z-10 hover:scale-125 transition-all cursor-zoom-in">
+                                                <% }) %>
+                                                <% if(inv.photos.length > 3) { %>
+                                                    <div class="h-12 w-12 rounded-2xl bg-slate-800 border-4 border-[#0b1120] flex items-center justify-center text-xs font-black shadow-2xl">+<%= inv.photos.length - 3 %></div>
+                                                <% } %>
+                                            <% } else { %>
+                                                <span class="text-xs text-gray-600 font-bold italic">لا يوجد</span>
+                                            <% } %>
+                                        </div>
+                                    </td>
+
+                                    <td class="p-6">
+                                        <div class="flex justify-center gap-3">
+                                            <button class="w-10 h-10 rounded-xl bg-emerald-500/10 text-emerald-500 hover:bg-emerald-500 hover:text-black transition-all shadow-lg"><i class="fas fa-print"></i></button>
+                                            <button class="w-10 h-10 rounded-xl bg-red-500/10 text-red-500 hover:bg-red-500 hover:text-white transition-all shadow-lg"><i class="fas fa-trash-alt"></i></button>
+                                        </div>
+                                    </td>
+                                </tr>
+                            <% }) %>
+                        <% } else { %>
+                            <tr>
+                                <td colspan="9" class="p-32 text-center">
+                                    <i class="fas fa-folder-open text-6xl text-gray-800 mb-4 block"></i>
+                                    <span class="text-2xl text-gray-700 font-black italic uppercase tracking-widest">No Sales Recorded Today</span>
+                                </td>
+                            </tr>
+                        <% } %>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <div id="addInvoiceModal" class="modal-blur p-4">
+        <div class="glass-card max-w-5xl w-full p-10 relative max-h-[90vh] overflow-y-auto border border-emerald-500/30 shadow-[0_0_50px_rgba(16,185,129,0.2)]">
+            <button onclick="closeModal('addInvoiceModal')" class="absolute top-8 left-8 text-gray-500 hover:text-white text-3xl transition-colors">
+                <i class="fas fa-times-circle"></i>
+            </button>
+            <h2 class="text-3xl font-black mb-10 border-r-8 border-emerald-500 pr-5 text-white uppercase italic tracking-tighter">إضافة عملية بيع جديدة</h2>
+            
+            <form action="/ready-stock/save" method="POST" enctype="multipart/form-data" class="grid grid-cols-1 md:grid-cols-3 gap-6 text-right">
+                <div class="md:col-span-3 text-emerald-500 font-black text-sm border-b border-white/10 pb-2 mb-2">بيانات العميل والمبيعات</div>
+                <input type="text" name="customerName" class="glass-input md:col-span-2" placeholder="اسم العميل الكامل" required>
+                <input type="text" name="customerPhone" class="glass-input" placeholder="رقم الهاتف" required>
+                <input type="text" name="salesPerson" class="glass-input" placeholder="اسم السيلز المسؤول" required>
+                <select name="branch" class="glass-input md:col-span-2" required>
+                    <option value="" disabled selected>اختر الفرع المباع منه</option>
+                    <option>المهندسين</option>
+                    <option>مدينة نصر 1</option>
+                    <option>مدينة نصر 4</option>
+                    <option>كفر الشيخ</option>
+                    <option>طنطا</option>
+                    <option>الاسماعيليه</option>
+                    <option>الغربيه</option>
+                    <option>اسيوط</option>
+                </select>
+
+                <div class="md:col-span-3 text-emerald-500 font-black text-sm border-b border-white/10 pb-2 mb-2 mt-4">مواصفات السيارة المباعة</div>
+                <input type="text" name="carBrand" placeholder="الماركة" class="glass-input" required>
+                <input type="text" name="carModel" placeholder="الموديل" class="glass-input" required>
+                <input type="number" name="carYear" placeholder="سنة الصنع" class="glass-input" required>
+                <input type="text" name="carColor" placeholder="اللون الخارجي" class="glass-input" required>
+                <input type="text" name="vinNumber" placeholder="رقم الشاسيه (VIN)" class="glass-input md:col-span-2 font-mono uppercase" required>
+                
+                <input type="number" name="price" placeholder="سعر البيع النهائي" class="glass-input" required>
+                <select name="paymentMethod" class="glass-input md:col-span-2">
+                    <option value="Cash">كاش</option>
+                    <option value="Bank">تقسيط بنكي</option>
+                    <option value="Internal">تقسيط داخلي</option>
+                </select>
+
+                <div class="md:col-span-3">
+                    <label class="block text-sm font-black text-gray-400 mb-3 mr-2">صور السيارة والعقد (بحد أقصى 10)</label>
+                    <div class="relative group h-40 border-2 border-dashed border-white/10 rounded-3xl flex flex-col items-center justify-center bg-white/5 hover:bg-emerald-500/5 hover:border-emerald-500 transition-all cursor-pointer">
+                        <input type="file" name="invoicePhotos" multiple class="absolute inset-0 opacity-0 cursor-pointer" accept="image/*">
+                        <i class="fas fa-cloud-upload-alt text-4xl text-gray-600 group-hover:text-emerald-500 mb-2"></i>
+                        <span class="text-gray-500 font-bold group-hover:text-white transition-colors">اسحب الصور هنا أو اضغط للاختيار</span>
+                    </div>
+                </div>
+
+                <button type="submit" class="md:col-span-3 btn-main p-6 rounded-3xl font-black text-2xl mt-6 shadow-2xl uppercase italic tracking-widest">
+                    تأكيد وحفظ البيانات <i class="fas fa-check-double mr-3"></i>
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        function openModal(id) { 
+            const modal = document.getElementById(id);
+            modal.style.display = 'flex'; 
+        }
+        function closeModal(id) { 
+            document.getElementById(id).style.display = 'none'; 
+        }
+    </script>
+</body>
+</html>

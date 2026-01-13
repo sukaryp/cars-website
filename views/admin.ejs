@@ -1,0 +1,306 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+
+<head>
+  <meta charset="UTF-8">
+  <title>لوحة تحكم الإدارة الاحترافية | Al-Captin System</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Tajawal:wght@400;700;900&display=swap');
+
+    body {
+      background: #0f172a;
+      color: white;
+      font-family: 'Tajawal', sans-serif;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    .glass-card {
+      background: rgba(255, 255, 255, 0.03);
+      backdrop-filter: blur(20px);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 24px;
+      padding: 2rem;
+    }
+
+    .glass-input {
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      color: white;
+      padding: 12px;
+      border-radius: 12px;
+      width: 100%;
+      outline: none;
+      transition: 0.3s;
+      font-weight: 700;
+    }
+
+    select.glass-input option {
+      background-color: #1e293b;
+      color: white;
+    }
+
+    .glass-input:focus {
+      border-color: #4f46e5;
+      background: rgba(255, 255, 255, 0.1);
+    }
+
+    #printableArea {
+      background: white !important;
+      color: black !important;
+    }
+
+    #printableArea table {
+      border-collapse: collapse;
+      width: 100%;
+    }
+
+    #printableArea th, 
+    #printableArea td {
+      border: 2px solid black !important;
+      color: black !important;
+      padding: 12px;
+      font-weight: 900;
+    }
+
+    #printableArea thead {
+      background-color: #f3f4f6 !important;
+    }
+
+    .btn-grad {
+      background: linear-gradient(135deg, #4f46e5, #3b82f6);
+      transition: 0.3s;
+      font-weight: 900;
+    }
+
+    .btn-grad:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 10px 20px rgba(59, 130, 246, 0.3);
+    }
+
+    .table-row:hover {
+      background: rgba(255, 255, 255, 0.05);
+    }
+
+    @media print {
+      @page { size: auto; margin: 10mm; }
+      body { background: white !important; color: black !important; }
+      body * { visibility: hidden; }
+      #printableArea, #printableArea * { visibility: visible; }
+      #printableArea { position: absolute; left: 0; top: 0; width: 100%; margin: 0; padding: 0; }
+      * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
+    }
+  </style>
+</head>
+
+<body class="p-6 md:p-12">
+
+  <div class="max-w-7xl mx-auto">
+    <div class="flex justify-between items-center mb-10">
+      <div>
+        <h1 class="text-4xl font-black italic text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-purple-500">ADMIN CONTROL CENTER</h1>
+        <p class="text-gray-400 text-sm mt-2">إدارة المستخدمين والتقارير المالية بناءً على الموظف</p>
+      </div>
+      <a href="/" class="bg-white/10 hover:bg-white/20 px-6 py-3 rounded-xl transition-all flex items-center gap-2">
+        <i class="fas fa-arrow-right"></i> العودة للرئيسية
+      </a>
+    </div>
+
+    <div class="glass-card mb-10 border-t-4 border-purple-500 shadow-2xl">
+      <h2 class="text-2xl font-black mb-8 flex items-center gap-3 text-purple-400">
+        <i class="fas fa-user-plus"></i> إنشاء صلاحية مستخدم جديد
+      </h2>
+      <form action="/admin/users/create" method="POST" class="grid grid-cols-1 md:grid-cols-4 gap-6">
+        <div class="md:col-span-1">
+          <label class="block text-xs text-gray-400 mb-2 mr-2">اسم الموظف الثنائي</label>
+          <input type="text" name="name" placeholder="مثال: أحمد محمد" class="glass-input" required>
+        </div>
+        <div>
+          <label class="block text-xs text-gray-400 mb-2 mr-2">اسم المستخدم (الدخول)</label>
+          <input type="text" name="username" placeholder="User123" class="glass-input" required>
+        </div>
+        <div>
+          <label class="block text-xs text-gray-400 mb-2 mr-2">كلمة المرور</label>
+          <input type="password" name="password" placeholder="••••••••" class="glass-input" required>
+        </div>
+        <div>
+          <label class="block text-xs text-gray-400 mb-2 mr-2">اختر الفرع</label>
+          <select name="branch" class="glass-input" required>
+            <option value="كفر الشيخ">كفر الشيخ</option>
+            <option value="أسيوط">أسيوط</option>
+            <option value="طنطا">طنطا</option>
+            <option value="الغربية">الغربية</option>
+            <option value="الإسماعيلية">الإسماعيلية</option>
+            <option value="المهندسين">المهندسين</option>
+            <option value="مدينة نصر 1">مدينة نصر 1</option>
+            <option value="مدينة نصر 2">مدينة نصر 2</option>
+            <option value="الكل">مدير عام (كل الفروع)</option>
+          </select>
+        </div>
+        <div class="md:col-span-2">
+          <label class="block text-xs text-gray-400 mb-2 mr-2">نوع الصلاحية</label>
+          <select name="role" class="glass-input" required>
+            <option value="branch">موظف فرع (دخول محدود للفرع فقط)</option>
+            <option value="admin">مدير عام (صلاحية كاملة وتقارير)</option>
+          </select>
+        </div>
+        <button type="submit" class="btn-grad p-4 rounded-xl font-black md:col-span-2 shadow-xl mt-6">
+          <i class="fas fa-check-circle ml-2"></i> تفعيل الحساب وإضافته للجدول
+        </button>
+      </form>
+
+      <div class="mt-12 overflow-hidden rounded-2xl border border-white/5 bg-white/5">
+        <table class="w-full text-right">
+          <thead class="bg-white/10 text-purple-300">
+            <tr>
+              <th class="p-4">اسم الموظف</th>
+              <th class="p-4">اسم المستخدم</th>
+              <th class="p-4">الفرع</th>
+              <th class="p-4">المنصب</th>
+              <th class="p-4">الحالة</th>
+            </tr>
+          </thead>
+          <tbody>
+            <% usersList.forEach(u => { %>
+            <tr class="table-row border-b border-white/5 transition-all">
+              <td class="p-4 font-bold"><%= u.name %></td>
+              <td class="p-4 text-gray-400 font-mono"><%= u.username %></td>
+              <td class="p-4 italic text-blue-400"><%= u.branch %></td>
+              <td class="p-4">
+                <span class="<%= u.role === 'admin' ? 'text-amber-400' : 'text-emerald-400' %> font-black">
+                  <%= u.role === 'admin' ? 'مدير عام' : 'موظف فرع' %>
+                </span>
+              </td>
+              <td class="p-4"><span class="w-2 h-2 rounded-full bg-emerald-500 inline-block ml-2 animate-pulse"></span> نشط</td>
+            </tr>
+            <% }) %>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="glass-card border-t-4 border-emerald-500 shadow-2xl mb-20">
+      <div class="flex justify-between items-center mb-8">
+        <h2 class="text-2xl font-black italic text-emerald-400 flex items-center gap-3">
+          <i class="fas fa-file-invoice-dollar"></i> مركز التقارير المالية والرقابة (حسب الموظف)
+        </h2>
+        <button onclick="window.print()" class="bg-emerald-600 hover:bg-emerald-700 text-white px-5 py-2 rounded-lg text-xs font-bold transition-all">
+          <i class="fas fa-print ml-1"></i> طباعة التقرير الورقي المفصل
+        </button>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-10">
+        <select id="reportUser" class="glass-input">
+          <option value="all">جميع الموظفين (تقرير شامل)</option>
+          <% usersList.forEach(u => { %>
+            <option value="<%= u.username %>"><%= u.name %> (<%= u.branch %>)</option>
+          <% }) %>
+        </select>
+        <input type="date" id="dateFrom" class="glass-input">
+        <input type="date" id="dateTo" class="glass-input">
+        <button onclick="generateDetailedReport()" class="btn-grad p-4 rounded-xl font-black">
+          تحليل أداء الموظف والماليات
+        </button>
+      </div>
+
+      <div id="reportResult" class="hidden space-y-8">
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+          <div class="p-6 bg-blue-500/10 rounded-3xl border border-blue-500/20 text-center">
+            <p class="text-xs text-blue-300 mb-1 italic">إجمالي قيمة التعاقدات</p>
+            <h3 id="totalValue" class="text-3xl font-black text-white">0</h3>
+          </div>
+          <div class="p-6 bg-emerald-500/10 rounded-3xl border border-emerald-500/20 text-center">
+            <p class="text-xs text-emerald-300 mb-1 italic">إجمالي المحصل الفعلي</p>
+            <h3 id="totalCollected" class="text-3xl font-black text-white">0</h3>
+          </div>
+          <div class="p-6 bg-red-500/10 rounded-3xl border border-red-500/20 text-center">
+            <p class="text-xs text-red-300 mb-1 italic">إجمالي المديونية (خارج المحل)</p>
+            <h3 id="totalOwed" class="text-3xl font-black text-white">0</h3>
+          </div>
+        </div>
+
+        <div id="printableArea" class="mt-10 bg-white text-black p-8 rounded-lg shadow-2xl overflow-x-auto">
+          <h3 class="text-2xl font-black mb-6 border-b-4 border-black pb-4 text-center">
+            <i class="fas fa-file-invoice-dollar ml-2"></i> تقرير الكابتن لمالية التعاقدات
+          </h3>
+
+          <table class="w-full text-right border-collapse border-2 border-black">
+            <thead class="bg-gray-200">
+              <tr>
+                <th class="border-2 border-black p-3 text-sm font-black">رقم العقد</th>
+                <th class="border-2 border-black p-3 text-sm font-black">العميل</th>
+                <th class="border-2 border-black p-3 text-sm font-black">بواسطة (الموظف)</th>
+                <th class="border-2 border-black p-3 text-sm font-black">السيارة</th>
+                <th class="border-2 border-black p-3 text-sm font-black text-blue-800">السعر الإجمالي</th>
+                <th class="border-2 border-black p-3 text-sm font-black text-emerald-700">مدفوع بنك</th>
+                <th class="border-2 border-black p-3 text-sm font-black text-orange-700">مدفوع مكتب</th>
+                <th class="border-2 border-black p-3 text-sm font-black text-red-700">المتبقي</th>
+              </tr>
+            </thead>
+            <tbody id="detailedTableBody" class="text-sm font-bold divide-y divide-black">
+            </tbody>
+          </table>
+
+          <div class="mt-8 flex justify-between items-center hidden print:flex border-t-2 border-black pt-4">
+            <p class="text-xs font-bold">توقيع المسؤول: ..........................</p>
+            <p class="text-xs font-bold">تاريخ الاستخراج: <%= new Date().toLocaleDateString('ar-EG') %></p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    async function generateDetailedReport() {
+      const selectedUser = document.getElementById('reportUser').value;
+      const from = document.getElementById('dateFrom').value;
+      const to = document.getElementById('dateTo').value;
+
+      Swal.fire({
+        title: 'جاري جرد بيانات الموظف والماليات...',
+        didOpen: () => {
+          Swal.showLoading()
+        }
+      });
+
+      // إرسال الـ username بدلاً من الـ branch للسيرفر
+      const res = await fetch(`/admin/api/reports/detailed?user=${selectedUser}&from=${from}&to=${to}`);
+      const data = await res.json();
+
+      Swal.close();
+      document.getElementById('reportResult').classList.remove('hidden');
+
+      // تحديث الإحصائيات
+      document.getElementById('totalValue').innerText = data.totalContractValue.toLocaleString() + ' ج.م';
+      document.getElementById('totalCollected').innerText = data.totalCollected.toLocaleString() + ' ج.م';
+      document.getElementById('totalOwed').innerText = data.totalOwed.toLocaleString() + ' ج.م';
+
+      // ملء الجدول المفصل
+      const tableBody = document.getElementById('detailedTableBody');
+      tableBody.innerHTML = '';
+
+      if(data.contracts && data.contracts.length > 0) {
+        data.contracts.forEach(c => {
+          tableBody.innerHTML += `
+            <tr class="print:border-black">
+              <td class="border border-black p-2 font-mono">${c.contractNumber}</td>
+              <td class="border border-black p-2 font-bold">${c.clientName}</td>
+              <td class="border border-black p-2 text-purple-700 font-black">${c.addedBy || 'غير محدد'}</td>
+              <td class="border border-black p-2 italic">${c.carName}</td>
+              <td class="border border-black p-2 font-bold">${c.totalPrice.toLocaleString()}</td>
+              <td class="border border-black p-2 text-blue-600">${c.bankPaid.toLocaleString()}</td>
+              <td class="border border-black p-2 text-emerald-600">${c.officePaid.toLocaleString()}</td>
+              <td class="border border-black p-2 text-red-600 font-bold">${c.remaining.toLocaleString()}</td>
+            </tr>
+          `;
+        });
+      } else {
+        tableBody.innerHTML = `<tr><td colspan="8" class="p-10 text-center text-gray-500">لا توجد تعاقدات مسجلة لهذا الموظف في الفترة المختارة</td></tr>`;
+      }
+    }
+  </script>
+</body>
+
+</html>
