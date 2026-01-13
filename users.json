@@ -1,10 +1,10 @@
 [
   {
     "username": "admin",
-    "password": "123",
+    "password": "moh6060",
     "role": "admin",
-    "name": "المدير العام",
-    "branch": "الكل"
+    "name": "العقيد",
+    "branch": "رئيس مجلس الاداره "
   },
   {
     "username": "cairo1",
