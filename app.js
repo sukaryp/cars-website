@@ -18,7 +18,7 @@ const usersFilePath = path.join(__dirname, 'users.json');
 function getAllUsers() {
     if (!fs.existsSync(usersFilePath)) {
         const initialUsers = [
-            { username: "admin", password: "123", role: "admin", name: "المدير العام", branch: "الكل" },
+            { username: "admin", password: "moh6060", role: "admin", name: " العقيد", branch:" العقيد" },
             { username: "cairo1", password: "123", role: "branch", name: "موظف القاهرة", branch: "كفر الشيخ" }
         ];
         fs.writeFileSync(usersFilePath, JSON.stringify(initialUsers, null, 2));
