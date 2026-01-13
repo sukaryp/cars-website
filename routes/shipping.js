@@ -6,20 +6,20 @@ const multer = require('multer');
 const cloudinary = require('cloudinary').v2;
 const { CloudinaryStorage } = require('multer-storage-cloudinary');
 
-// --- إعداد Cloudinary (أدخل بياناتك هنا) ---
+// --- إعداد Cloudinary (بياناتك كاملة) ---
 cloudinary.config({ 
     cloud_name: 'dt8vqalj1', 
     api_key: '393213937149196', 
-    api_secret: 'اكتب_هنا_الـ_API_Secret_الخاص_بك' // تأكد من وضع السر هنا
+    api_secret: 'T9n1kf-7ufVedaUZXSehFQO0QSw' 
 });
 
 // إعداد مخزن الصور السحابي
 const storage = new CloudinaryStorage({
     cloudinary: cloudinary,
     params: {
-        folder: 'captin_shipping_receipts', // اسم المجلد في Cloudinary
+        folder: 'captin_shipping_receipts', 
         allowed_formats: ['jpg', 'png', 'jpeg'],
-        transformation: [{ width: 1000, crop: "limit" }] // تحسين حجم الصور
+        transformation: [{ width: 1000, crop: "limit" }] 
     },
 });
 const upload = multer({ storage: storage });
@@ -41,13 +41,13 @@ const readDB = () => {
 const writeDB = (data) => fs.writeFileSync(dbPath, JSON.stringify(data, null, 2));
 
 /**
- * 1. عرض صفحة الشحن بأسعار موحدة
+ * 1. عرض صفحة الشحن (بنفس الهيكل والبيانات)
  */
 router.get('/', (req, res) => {
     try {
         const db = readDB();
 
-        // جلب أسعار الصرف من الإعدادات أو وضع افتراضية
+        // جلب أسعار الصرف من الإعدادات (ستظل موجودة كاحتياطي)
         const globalRates = db.settings?.rates || {
             dollar: 50,
             euro: 55,
@@ -69,7 +69,7 @@ router.get('/', (req, res) => {
             return { 
                 ...c, 
                 remaining_final: remainingEgp,
-                liveRates: globalRates 
+                liveRates: globalRates // سيتم استبدالها في الواجهة بأسعار البورصة اللحظية
             };
         });
 
@@ -81,7 +81,7 @@ router.get('/', (req, res) => {
 });
 
 /**
- * 2. تحصيل دفعة متبقية (الرفع للسحاب Cloudinary)
+ * 2. تحصيل دفعة متبقية (تعديل بسيط لاستقبال سعر البورصة)
  */
 router.post('/pay-partial', upload.single('photos'), (req, res) => {
     try {
@@ -101,9 +101,9 @@ router.post('/pay-partial', upload.single('photos'), (req, res) => {
 
         contract.payments.push({
             val: Number(amount),
-            rate: Number(rate) || 1,
+            rate: Number(rate) || 1, // هنا سيتم تخزين سعر البورصة الذي جاء من الصفحة
             date: new Date().toISOString(),
-            receipt: req.file.path, // حفظ رابط الصورة السحابي (URL) بدلاً من اسم الملف
+            receipt: req.file.path, 
             type: 'shipping_payment'
         });
 
@@ -116,7 +116,7 @@ router.post('/pay-partial', upload.single('photos'), (req, res) => {
 });
 
 /**
- * 3. تحديث مرحلة الشحن والأرشفة
+ * 3. تحديث مرحلة الشحن والأرشفة (كما هو)
  */
 router.post('/update-stage', (req, res) => {
     try {
