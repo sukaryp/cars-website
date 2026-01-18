@@ -8,7 +8,7 @@
   <script src="https://cdn.tailwindcss.com"></script>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
   <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
- <style>
+  <style>
     @import url('https://fonts.googleapis.com/css2?family=Tajawal:wght@400;700;900&display=swap');
 
     :root {
@@ -43,7 +43,8 @@
     table {
       width: 100%;
       border-collapse: separate;
-      border-spacing: 0 12px; /* مسافة بين الصفوف لجعلها تبدو كبطاقات */
+      border-spacing: 0 12px;
+      /* مسافة بين الصفوف لجعلها تبدو كبطاقات */
     }
 
     th {
@@ -65,13 +66,14 @@
     }
 
     /* حواف الصفوف الدائرية */
-    td:first-child { 
-        border-radius: 0 20px 20px 0; 
-        border-right: 1px solid var(--border);
+    td:first-child {
+      border-radius: 0 20px 20px 0;
+      border-right: 1px solid var(--border);
     }
-    td:last-child { 
-        border-radius: 20px 0 0 20px; 
-        border-left: 1px solid var(--border);
+
+    td:last-child {
+      border-radius: 20px 0 0 20px;
+      border-left: 1px solid var(--border);
     }
 
     tr:hover td {
@@ -110,9 +112,17 @@
       font-weight: 800;
     }
 
-    .price-tag { color: var(--success); background: rgba(16, 185, 129, 0.1); border: 1px solid rgba(16, 185, 129, 0.2); }
-    
-    .action-buttons { display: flex; gap: 8px; justify-content: flex-end; }
+    .price-tag {
+      color: var(--success);
+      background: rgba(16, 185, 129, 0.1);
+      border: 1px solid rgba(16, 185, 129, 0.2);
+    }
+
+    .action-buttons {
+      display: flex;
+      gap: 8px;
+      justify-content: flex-end;
+    }
 
     .btn-action {
       padding: 10px 18px;
@@ -146,42 +156,47 @@
 
     /* تنسيق المدخلات */
     /* 1. التنسيق الأساسي للمدخلات (للشاشة الغامقة) */
-.glass-input {
-    background: rgba(255, 255, 255, 0.08) !important;
-    border: 2px solid var(--border) !important;
-    color: white !important; /* النص أبيض عشان يبان في الـ Dark Mode */
-    padding: 14px 18px;
-    border-radius: 16px;
-    width: 100%;
-    outline: none;
-    transition: 0.3s;
-    font-size: 1.1rem;
-    font-weight: 800; /* خط تقيل عشان الوضوح */
-}
+    .glass-input {
+      background: rgba(255, 255, 255, 0.08) !important;
+      border: 2px solid var(--border) !important;
+      color: white !important;
+      /* النص أبيض عشان يبان في الـ Dark Mode */
+      padding: 14px 18px;
+      border-radius: 16px;
+      width: 100%;
+      outline: none;
+      transition: 0.3s;
+      font-size: 1.1rem;
+      font-weight: 800;
+      /* خط تقيل عشان الوضوح */
+    }
 
-/* 2. حل مشكلة القوائم المنسدلة (dropdown) اللي بتظهر أبيض في أبيض */
-.glass-input option {
-    background-color: #1e293b !important; /* خلفية غامقة للخيارات */
-    color: white !important; /* نص أبيض واضح */
-}
+    /* 2. حل مشكلة القوائم المنسدلة (dropdown) اللي بتظهر أبيض في أبيض */
+    .glass-input option {
+      background-color: #1e293b !important;
+      /* خلفية غامقة للخيارات */
+      color: white !important;
+      /* نص أبيض واضح */
+    }
 
-/* 3. "السحر" اللي بيصلح الطباعة والتقرير الأبيض */
-/* أي input جوه منطقة الطباعة يتحول لونه لأسود فورا */
-#printableArea .glass-input, 
-#printableArea select, 
-#printableArea text,
-#printableArea {
-    color: black !important;
-    background: white !important;
-    border-color: black !important;
-}
+    /* 3. "السحر" اللي بيصلح الطباعة والتقرير الأبيض */
+    /* أي input جوه منطقة الطباعة يتحول لونه لأسود فورا */
+    #printableArea .glass-input,
+    #printableArea select,
+    #printableArea text,
+    #printableArea {
+      color: black !important;
+      background: white !important;
+      border-color: black !important;
+    }
 
-/* 4. تحسين التركيز (Focus) */
-.glass-input:focus {
-    border-color: var(--primary) !important;
-    background: rgba(255, 255, 255, 0.12) !important;
-    box-shadow: 0 0 20px rgba(59, 130, 246, 0.3);
-}
+    /* 4. تحسين التركيز (Focus) */
+    .glass-input:focus {
+      border-color: var(--primary) !important;
+      background: rgba(255, 255, 255, 0.12) !important;
+      box-shadow: 0 0 20px rgba(59, 130, 246, 0.3);
+    }
+
     .modal-blur {
       display: none;
       position: fixed;
@@ -227,19 +242,29 @@
       border-color: var(--primary);
     }
 
-    .custom-scroll::-webkit-scrollbar { width: 5px; }
-    .custom-scroll::-webkit-scrollbar-thumb { background: rgba(255, 255, 255, 0.1); border-radius: 10px; }
+    .custom-scroll::-webkit-scrollbar {
+      width: 5px;
+    }
+
+    .custom-scroll::-webkit-scrollbar-thumb {
+      background: rgba(255, 255, 255, 0.1);
+      border-radius: 10px;
+    }
   </style>
 </head>
 
 <body class="p-4 md:p-10">
 
-<div class="max-w-[95%] mx-auto">
+  <div class="max-w-[95%] mx-auto">
     <div class="flex flex-col md:flex-row justify-between items-center mb-12 gap-6">
       <div class="glass-card p-6 px-10 border-r-8 border-blue-600">
         <h1 class="text-4xl font-black tracking-tighter italic">
-          <span class="text-blue-500">AL-CAPTIN</span> SYSTEM
-          <span class="block text-sm font-normal text-gray-400 not-italic">فرع: <%= user.branch %> | الموظف: <%= user.name %></span>
+          <a href="/" class="hover:opacity-80 transition-opacity">
+            <span class="text-blue-500">AL-CAPTIN</span> SYSTEM
+          </a>
+          <span class="block text-sm font-normal text-gray-400 not-italic">
+            فرع: <%= user.branch %> | الموظف: <%= user.name %>
+          </span>
         </h1>
       </div>
       <div class="flex gap-4">
@@ -276,25 +301,25 @@
                 <div class="flex flex-col gap-2">
                   <div class="flex items-center">
                     <span class="px-20 py-1 bg-blue-500/10 rounded-lg text-[18px] font-black text-blue-400 border border-blue-500/20 shadow-sm">
-                       <i class="fas fa-user-edit ml-1"></i> <%= c.createdBy || 'غير مسجل' %>
+                      <i class="fas fa-user-edit ml-1"></i> <%= c.createdBy || 'غير مسجل' %>
                     </span>
                   </div>
                   <div class="flex flex-col pr-1 border-r-2 border-white/10 gap-1">
                     <span class="text-[13px] text-gray-300 font-bold">
-                       <i class="fas fa-store ml-1 text-gray-600"></i> فرع: <%= c.branchName %>
+                      <i class="fas fa-store ml-1 text-gray-600"></i> فرع: <%= c.branchName %>
                     </span>
                     <span class="text-[17px] text-yellow-400 flex items-center gap-1 font-bold">
-           <i class="far fa-calendar-alt"></i> 
-           <%= c.timestamp ? new Date(c.timestamp).toLocaleDateString('ar-EG') : 'تاريخ قديم' %>
-        </span>
+                      <i class="far fa-calendar-alt"></i>
+                      <%= c.timestamp ? new Date(c.timestamp).toLocaleDateString('ar-EG') : 'تاريخ قديم' %>
+                    </span>
 
-        <span class="text-[16px] text-emerald-400 flex items-center gap-1 font-black font-mono mt-1 bg-emerald-500/10 w-fit px-2 rounded">
-           <i class="far fa-clock"></i> 
-           <%= c.timestamp ? new Date(c.timestamp).toLocaleTimeString('ar-EG', {hour: '2-digit', minute:'2-digit', second:'2-digit'}) : '--:--' %>
-        </span>
-    </div>
-  </div>
-</td>
+                    <span class="text-[16px] text-emerald-400 flex items-center gap-1 font-black font-mono mt-1 bg-emerald-500/10 w-fit px-2 rounded">
+                      <i class="far fa-clock"></i>
+                      <%= c.timestamp ? new Date(c.timestamp).toLocaleTimeString('ar-EG', {hour: '2-digit', minute:'2-digit', second:'2-digit'}) : '--:--' %>
+                    </span>
+                  </div>
+                </div>
+              </td>
               <td class="p-6">
                 <div class="font-bold text-lg text-white"><%= c.name %></div>
                 <div class="text-xs text-gray-500 mt-1 font-bold"><%= c.phone %></div>
@@ -390,8 +415,9 @@
           <input type="text" name="nid" placeholder="الرقم القومي" class="glass-input">
         </div>
         <div class="space-y-2">
-  <label class="text-xs text-yellow-500 px-2 font-bold uppercase tracking-widest">3- جهة التعاقد</label>
-<input type="text" name="branchName" id="branchName" placeholder="اكتب الفرع (مثلاً: المهندسين)" class="glass-input"></div>
+          <label class="text-xs text-yellow-500 px-2 font-bold uppercase tracking-widest">3- جهة التعاقد</label>
+          <input type="text" name="branchName" id="branchName" placeholder="اكتب الفرع (مثلاً: المهندسين)" class="glass-input">
+        </div>
 
         <div class="space-y-2">
           <label class="text-xs text-gray-400 px-2 font-bold uppercase tracking-widest">2- تفاصيل المركبة</label>
@@ -435,7 +461,8 @@
                 <option value="55.00">جاري جلب اليورو...</option>
                 <option value="1">جنيه مصري (EGP)</option>
               </select>
-              <input type="hidden" name="dep_currency" value="USD"> </div>
+              <input type="hidden" name="dep_currency" value="USD">
+            </div>
             <div>
               <label class="text-[10px] text-gray-500 block mb-2 mr-2">المبلغ المدفوع (حجز)</label>
               <input type="text" id="dep_display" placeholder="0.00" class="glass-input text-emerald-400 text-xl font-black" oninput="formatNumberInput(this, 'dep_real')">
@@ -516,7 +543,7 @@
     </div>
   </div>
 
- <script>
+  <script>
     // --- 1. نظام جلب أسعار البورصة الحية ---
     async function fetchLiveExchangeRates() {
       try {
@@ -567,7 +594,7 @@
       if (price > 0 && dep > 0) {
         box.classList.remove('hidden');
         const egpVal = dep * rate;
-        const remain = price - egpVal; 
+        const remain = price - egpVal;
 
         box.innerHTML = `
             <div class="flex justify-around items-center p-4 bg-black/20 rounded-2xl border border-white/10">
@@ -624,35 +651,35 @@
       // سجل الدفعات
       let historyHtml = '';
 
-// 1. عرض كل المدفوعات من المصفوفة الموحدة (الجديدة)
-(c.payments || []).forEach(p => {
-    // تحديد الشكل والاسم بناءً على النوع
-    const isBank = p.type === 'bank_transfer' || p.isBank || p.bankName;
-    const label = isBank ? `تحويل بنكي (${p.bankName || 'حساب بنكي'})` : `دفعة مكتب (${new Date(p.date).toLocaleDateString('ar-EG')})`;
-    const borderColor = isBank ? 'border-blue-400' : 'border-emerald-500';
-    const bgColor = isBank ? 'bg-blue-500/10' : 'bg-white/5';
-    const textColor = isBank ? 'text-blue-400' : 'text-emerald-400';
+      // 1. عرض كل المدفوعات من المصفوفة الموحدة (الجديدة)
+      (c.payments || []).forEach(p => {
+        // تحديد الشكل والاسم بناءً على النوع
+        const isBank = p.type === 'bank_transfer' || p.isBank || p.bankName;
+        const label = isBank ? `تحويل بنكي (${p.bankName || 'حساب بنكي'})` : `دفعة مكتب (${new Date(p.date).toLocaleDateString('ar-EG')})`;
+        const borderColor = isBank ? 'border-blue-400' : 'border-emerald-500';
+        const bgColor = isBank ? 'bg-blue-500/10' : 'bg-white/5';
+        const textColor = isBank ? 'text-blue-400' : 'text-emerald-400';
 
-    historyHtml += `
+        historyHtml += `
       <div class="flex justify-between items-center p-3 ${bgColor} rounded-xl border-r-4 ${borderColor} mb-2 shadow-sm">
           <span class="text-sm font-bold text-gray-200">${label}</span> 
           <span class="${textColor} font-black">+ ${(Number(p.val) * Number(p.rate)).toLocaleString()} ج.م</span>
       </div>`;
-});
+      });
 
-// 2. عرض البيانات القديمة (فقط إذا لم تكن موجودة في المصفوفة الجديدة)
-(c.paymentHistory || []).forEach(ph => {
-    // فحص بسيط عشان م نكررش العملية لو موجودة في المصفوفتين
-    const alreadyShown = (c.payments || []).some(p => p.date === ph.date && (p.val * p.rate) === ph.amount);
-    
-    if (!alreadyShown) {
-        historyHtml += `
+      // 2. عرض البيانات القديمة (فقط إذا لم تكن موجودة في المصفوفة الجديدة)
+      (c.paymentHistory || []).forEach(ph => {
+        // فحص بسيط عشان م نكررش العملية لو موجودة في المصفوفتين
+        const alreadyShown = (c.payments || []).some(p => p.date === ph.date && (p.val * p.rate) === ph.amount);
+
+        if (!alreadyShown) {
+          historyHtml += `
           <div class="flex justify-between items-center p-3 bg-blue-500/10 rounded-xl border-r-4 border-blue-400 mb-2 shadow-sm">
               <span class="text-sm font-bold text-gray-200">تحويل بنكي قديم (${ph.bank || 'بنك'})</span> 
               <span class="text-blue-400 font-black">+ ${Number(ph.amount).toLocaleString()} ج.م</span>
           </div>`;
-    }
-});
+        }
+      });
       // بناء المحتوى (الهيكل الكامل)
       document.getElementById('detailsContent').innerHTML = `
         <div class="grid grid-cols-1 md:grid-cols-2 gap-12 text-right">
@@ -766,16 +793,32 @@
       try {
         const res = await fetch('/contracts/export-to-shipping', {
           method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ id: selectedContractForShipping.id, duration: months })
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({
+            id: selectedContractForShipping.id,
+            duration: months
+          })
         });
         if (res.ok) {
-          Swal.fire({ title: 'تم التصدير!', text: 'تم نقل العقد بنجاح لمرحلة الشحن.', icon: 'success', timer: 2000, showConfirmButton: false, willClose: () => { window.location.reload(); } });
+          Swal.fire({
+            title: 'تم التصدير!',
+            text: 'تم نقل العقد بنجاح لمرحلة الشحن.',
+            icon: 'success',
+            timer: 2000,
+            showConfirmButton: false,
+            willClose: () => {
+              window.location.reload();
+            }
+          });
         } else {
           const errData = await res.json();
           Swal.fire('خطأ!', errData.error || 'حدث خطأ غير متوقع', 'error');
         }
-      } catch (err) { Swal.fire('خطأ!', 'فشل الاتصال بالسيرفر', 'error'); }
+      } catch (err) {
+        Swal.fire('خطأ!', 'فشل الاتصال بالسيرفر', 'error');
+      }
     }
 
     async function submitPartial() {
@@ -785,16 +828,31 @@
       try {
         const res = await fetch('/contracts/pay-partial', {
           method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ id: currentId, amount: amount, rate: rate })
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({
+            id: currentId,
+            amount: amount,
+            rate: rate
+          })
         });
         if (res.ok) {
-          Swal.fire({ title: 'تم التحصيل!', text: 'تم تسجيل المبلغ في سجل العميل.', icon: 'success', willClose: () => { window.location.reload(); } });
+          Swal.fire({
+            title: 'تم التحصيل!',
+            text: 'تم تسجيل المبلغ في سجل العميل.',
+            icon: 'success',
+            willClose: () => {
+              window.location.reload();
+            }
+          });
         } else {
           const errData = await res.json();
           Swal.fire('خطأ!', errData.error || 'فشل التسجيل', 'error');
         }
-      } catch (err) { Swal.fire('خطأ!', 'حدثت مشكلة تقنية أثناء التسجيل', 'error'); }
+      } catch (err) {
+        Swal.fire('خطأ!', 'حدثت مشكلة تقنية أثناء التسجيل', 'error');
+      }
     }
 
     async function deleteContract(id) {
@@ -812,18 +870,27 @@
           try {
             const res = await fetch('/contracts/delete', {
               method: 'POST',
-              headers: { 'Content-Type': 'application/json' },
-              body: JSON.stringify({ id: id })
+              headers: {
+                'Content-Type': 'application/json'
+              },
+              body: JSON.stringify({
+                id: id
+              })
             });
-            if (res.ok) { window.location.reload(); }
-            else { Swal.fire('فشل!', 'ليس لديك صلاحيات كافية للحذف', 'error'); }
-          } catch (err) { Swal.fire('خطأ!', 'فشل الاتصال بالسيرفر', 'error'); }
+            if (res.ok) {
+              window.location.reload();
+            } else {
+              Swal.fire('فشل!', 'ليس لديك صلاحيات كافية للحذف', 'error');
+            }
+          } catch (err) {
+            Swal.fire('خطأ!', 'فشل الاتصال بالسيرفر', 'error');
+          }
         }
       });
     }
 
     document.addEventListener('DOMContentLoaded', fetchLiveExchangeRates);
-</script>
+  </script>
 </body>
 
 </html>
