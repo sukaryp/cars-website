@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+
+<head>
+  <meta charset="UTF-8">
+  <title>أرشيف المستندات | Al-Captin</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Tajawal:wght@400;700;900&display=swap');
+
+    body {
+      background: #0b1120;
+      color: white;
+      font-family: 'Tajawal', sans-serif;
+    }
+
+    .glass-card {
+      background: rgba(30, 41, 59, 0.5);
+      backdrop-filter: blur(20px);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 24px;
+      transition: 0.3s;
+    }
+
+    .glass-card:hover {
+      transform: translateY(-5px);
+      border-color: rgba(168, 85, 247, 0.4);
+      shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+    }
+  </style>
+</head>
+
+<body class="p-6 md:p-12">
+  <div class="max-w-7xl mx-auto">
+    <div class="flex justify-between items-center mb-12">
+      <div>
+        <h1 class="text-4xl font-black text-purple-400 tracking-tight">أرشيف العمليات المنتهية</h1>
+        <p class="text-gray-400 text-sm mt-2 font-bold">السجلات المركزية للسيارات المسلمة</p>
+      </div>
+      <a href="/" class="bg-purple-600 hover:bg-purple-500 text-white px-8 py-3 rounded-2xl transition-all font-bold shadow-lg flex items-center gap-2">
+        <i class="fas fa-arrow-right"></i> العودة للرئيسية
+      </a>
+    </div>
+
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+      <% if (typeof archivedContracts !== 'undefined' && archivedContracts && archivedContracts.length > 0) { %>
+      <% archivedContracts.forEach(c => { %>
+      <div class="glass-card p-6 relative group overflow-hidden border-r-4 border-r-purple-500">
+        <div class="flex justify-between items-start mb-6">
+          <div>
+            <h3 class="font-black text-xl text-white mb-1"><%= c.customerName || c.name %></h3>
+            <span class="text-[10px] text-purple-400 font-mono bg-purple-500/10 px-2 py-1 rounded">معرف: <%= c.id %></span>
+          </div>
+          <div class="bg-emerald-500/20 p-2 rounded-full">
+            <i class="fas fa-check-circle text-emerald-500"></i>
+          </div>
+        </div>
+
+        <div class="space-y-3 mb-8 bg-white/5 p-4 rounded-xl">
+          <div class="flex justify-between text-sm">
+            <span class="text-gray-400 font-bold">السيارة:</span>
+            <span class="text-white font-black"><%= c.carBrand || c.brand %> <%= c.carModel || c.model %></span>
+          </div>
+          <div class="flex justify-between text-sm">
+            <span class="text-gray-400 font-bold">سنة الصنع:</span>
+            <span class="text-white font-black"><%= c.carYear || c.year %></span>
+          </div>
+          <div class="flex justify-between text-sm">
+            <span class="text-gray-400 font-bold">الفرع:</span>
+            <span class="text-emerald-400 font-black"><%= c.branch %></span>
+          </div>
+        </div>
+
+        <div class="grid grid-cols-2 gap-3">
+          <button class="bg-blue-600/20 hover:bg-blue-600 text-blue-400 hover:text-white py-3 rounded-xl text-xs font-black transition-all flex items-center justify-center gap-2">
+            <i class="fas fa-images"></i> عرض الصور
+          </button>
+          <button class="bg-purple-600/20 hover:bg-purple-600 text-purple-400 hover:text-white py-3 rounded-xl text-xs font-black transition-all flex items-center justify-center gap-2">
+            <i class="fas fa-file-contract"></i> المستندات
+          </button>
+        </div>
+      </div>
+      <% }) %>
+      <% } else { %>
+      <div class="col-span-full text-center py-32 glass-card">
+        <div class="bg-white/5 w-24 h-24 rounded-full flex items-center justify-center mx-auto mb-6">
+          <i class="fas fa-folder-open text-5xl text-gray-700"></i>
+        </div>
+        <h2 class="text-2xl font-black text-gray-500 uppercase tracking-widest">No Archived Records Found</h2>
+        <p class="text-gray-600 mt-2 font-bold italic text-sm">لا توجد عمليات مبيعات مؤرشفة في النظام حالياً</p>
+      </div>
+      <% } %>
+    </div>
+  </div>
+</body>
+
+</html>
